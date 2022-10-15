@@ -57,7 +57,5 @@ def ipconfig():
             run_ipconfig(parameter="/?")
         elif param is None:
             pass
-
-
     elif add_param is False:
         run_ipconfig()
