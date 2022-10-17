@@ -53,7 +53,7 @@ def console_ui(start_mode=False):
     command_dict = get_command_dict()
     if start_mode is True:
         print("CommandBlade Console [Version 0.0.1]"
-              "\nHalim Mouaziz")
+              "\nHalim Mouaziz, Project Hephaestus.")
     command = inquirer.text(message="", style=style).execute()
     command_name = command.split(' ', 1)[0]
     if command_name in command_dict.keys():
