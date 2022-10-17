@@ -44,15 +44,11 @@ def main_menu():
         sys.exit(1)
 
 
-# The command console will use an InquirerPy text prompt to select and run an argparse parser which will handle
-# the arguments provided in the text prompt.
-
-
 def console_ui(start_mode=False):
     style = get_custom_style()
     command_dict = get_command_dict()
     if start_mode is True:
-        print("CommandBlade Console [Version 0.0.1]"
+        print("CommandBlade Console [Version 0.0.2]"
               "\nHalim Mouaziz, Project Hephaestus.")
     command = inquirer.text(message="", style=style).execute()
     command_name = command.split(' ', 1)[0]
