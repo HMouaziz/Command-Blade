@@ -3,9 +3,8 @@ from InquirerPy import inquirer
 from InquirerPy.base.control import Choice
 from pyfiglet import Figlet
 from printy import printy
-
-import operations
-from functions import get_terminal_width, get_custom_style, get_command_dict
+import core.operations
+from core.functions import get_terminal_width, get_custom_style, get_command_dict
 
 
 def start():
@@ -29,7 +28,9 @@ def main_menu():
             Choice(value=None, name="Exit"),
         ],
         default=None,
-        style=style
+        style=style,
+        qmark="≻≻",
+        amark="≻≻"
     ).execute()
     if mode == 1:
         console_ui(start_mode=True)
@@ -48,13 +49,13 @@ def console_ui(start_mode=False):
     style = get_custom_style()
     command_dict = get_command_dict()
     if start_mode is True:
-        print("CommandBlade Console [Version 0.0.2]"
-              "\nHalim Mouaziz, Project Hephaestus.")
-    command = inquirer.text(message="", style=style).execute()
+        printy("CommandBlade Console [Version 0.0.2]"
+               "\nHalim Mouaziz, Project Hephaestus.", 'o>')
+    command = inquirer.text(message="", style=style, qmark="≻≻", amark="≻≻").execute()
     command_name = command.split(' ', 1)[0]
     if command_name in command_dict.keys():
         parser = command_dict[command_name]
-        run_parser = getattr(operations, parser)
+        run_parser = getattr(core.operations, parser)
         if command_name != command:
             args = command.split(' ', 1)[-1].split(' ')
             run_parser(args)

@@ -3,7 +3,6 @@ import time
 import pytz
 from InquirerPy import get_style
 from datetime import datetime
-
 from printy import printy
 
 

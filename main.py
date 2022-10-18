@@ -1,6 +1,8 @@
-from interface import start
+from core.core import CommandBlade
+from core.interface import start
 
 
 if __name__ == '__main__':
-    start()
+    app = CommandBlade()
+    app.run()
 

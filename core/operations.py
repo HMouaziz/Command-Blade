@@ -1,13 +1,11 @@
 import pytz
-from InquirerPy import inquirer
 from printy import printy
-
-from functions import get_terminal_width, get_datetime_list, get_aware_datetime, print_all_recognised_tz
+from core.functions import get_terminal_width, get_datetime_list, get_aware_datetime, print_all_recognised_tz
 
 
 def exit_command(args=None):
     if args is None:
-        from interface import main_menu
+        from core.interface import main_menu
         main_menu()
     elif args[0] == '-f':
         exit(1)
@@ -32,12 +30,12 @@ def help_command(args=None):
 
 def time_command(args=None):
     datetime_list = get_datetime_list()
-    aware_datetime = get_aware_datetime(args[1])
     if args is None:
         printy(f'The current local time is {datetime_list[1]}', 'y')
     elif args[0] == '-d':
         printy(f'It is {datetime_list[1].strftime("%I:%M %p on %A the %d of %B %G")}.', 'y')
     elif args[0] == '-tz':
+        aware_datetime = get_aware_datetime(args[1])
         if len(args) == 1:
             printy('Timezone must be specified.'.center(get_terminal_width()), '<r')
             print_all_recognised_tz()
