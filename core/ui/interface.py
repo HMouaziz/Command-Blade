@@ -1,11 +1,12 @@
+import inspect
 import sys
 from InquirerPy import inquirer
 from InquirerPy.base.control import Choice
 from pyfiglet import Figlet
 from printy import printy
-import core.console
-import core.operations
-from core.functions import get_terminal_width, get_custom_style, get_command_dict
+from core import commands
+from .ui_utils import get_custom_style, get_command_list
+from ..utils import get_terminal_width
 
 
 def start():
@@ -47,23 +48,28 @@ def main_menu():
 
 
 def console_ui(start_mode=False):
-    style = get_custom_style()
-    command_dict = get_command_dict()
     if start_mode is True:
-        printy("CommandBlade Console [Version 0.0.2]"
+        printy("CommandBlade Console [Version 0.1.3]"
                "\nHalim Mouaziz, Project Hephaestus.", 'o>')
+    style = get_custom_style()
     command = inquirer.text(message="", style=style, qmark="≻≻", amark="≻≻").execute()
     command_name = command.split(' ', 1)[0]
-    if command_name in command_dict.keys():
-        run_parser = getattr(core.console, command_dict[command_name])
-        if command_name != command:
-            args = command.split(' ', 1)[-1].split(' ')
-            run_parser(args)
+    try:
+        if command_name.capitalize() in get_command_list():
+            class_name = getattr(commands, command_name.capitalize())
+            class_instance = class_name()
+            class_instance.run = getattr(class_instance, 'feed_executor')
+            if command_name != command:
+                args = command.split(' ', 1)[-1].split(' ')
+                class_instance.run(args)
+            else:
+                class_instance.run(args='-')
         else:
-            run_parser(args='0')
-    else:
-        print(f'{command_name} is not a recognized command. '
-              f'\n You can use the "help" command if you need a list of available commands.')
+            raise printy(f'{command_name} is not a recognized command. '.center(get_terminal_width()) +
+                         f'\n You can use the "help" command if you need a list of available commands.'
+                         f''.center(get_terminal_width()), '<r')
+    except TypeError:
+        pass
     console_ui()
 
 

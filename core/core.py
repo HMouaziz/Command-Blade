@@ -3,8 +3,8 @@ import importlib
 from printy import printy
 from pyfiglet import Figlet
 
-from core.functions import get_terminal_width
-from core.interface import main_menu
+from core.utils import get_terminal_width
+from core.ui.interface import main_menu
 
 
 class CommandBlade:

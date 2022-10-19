@@ -1,11 +1,11 @@
 import pytz
 from printy import printy
-from core.functions import get_terminal_width, get_datetime_list, get_aware_datetime, print_all_recognised_tz
+from core.utils import get_terminal_width, get_datetime_list, get_aware_datetime, print_all_recognised_tz
 
 
 def exit_command(args=None):
     if args is None:
-        from core.interface import main_menu
+        from core.ui.interface import main_menu
         main_menu()
     elif args[0] == '-f':
         exit(1)
