@@ -1,6 +1,6 @@
 from printy import printy
-from . import commands
-from .utils import get_terminal_width
+from core.console import commands
+from core.utils import get_terminal_width
 
 
 def executor(command_name, arguments, command_dict):

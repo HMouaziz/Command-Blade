@@ -1,7 +1,7 @@
 import inspect
 
 from InquirerPy import get_style
-from core import commands
+from core.console import commands
 
 
 def get_custom_style():

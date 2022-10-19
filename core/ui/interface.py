@@ -1,10 +1,9 @@
-import inspect
 import sys
 from InquirerPy import inquirer
 from InquirerPy.base.control import Choice
 from pyfiglet import Figlet
 from printy import printy
-from core import commands
+from ..console import commands
 from .ui_utils import get_custom_style, get_command_list
 from ..utils import get_terminal_width
 
@@ -49,7 +48,7 @@ def main_menu():
 
 def console_ui(start_mode=False):
     if start_mode is True:
-        printy("CommandBlade Console [Version 0.1.3]"
+        printy("CommandBlade Console [Version 0.1.4]"
                "\nHalim Mouaziz, Project Hephaestus.", 'o>')
     style = get_custom_style()
     command = inquirer.text(message="", style=style, qmark="≻≻", amark="≻≻").execute()

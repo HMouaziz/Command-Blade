@@ -2,7 +2,6 @@ import importlib
 
 from printy import printy
 from pyfiglet import Figlet
-
 from core.utils import get_terminal_width
 from core.ui.interface import main_menu
 
@@ -14,7 +13,7 @@ class CommandBlade:
                 importlib.import_module(plugin, ".plugins").Plugin() for plugin in plugins
             ]
         else:
-            self._plugins = [importlib.import_module('.default', ".core").Plugin()]
+            self._plugins = [importlib.import_module('.default', "plugins").Plugin()]
 
     def run(self):
         width = get_terminal_width()
