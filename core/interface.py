@@ -3,6 +3,7 @@ from InquirerPy import inquirer
 from InquirerPy.base.control import Choice
 from pyfiglet import Figlet
 from printy import printy
+import core.console
 import core.operations
 from core.functions import get_terminal_width, get_custom_style, get_command_dict
 
@@ -11,7 +12,7 @@ def start():
     width = get_terminal_width()
     m = Figlet(font='slant', width=width)
     printy(m.renderText("CommandBlade"), 'o')
-    print("[  CommandBlade v0.0.1, Halim Mouaziz  ]".center(width))
+    print("[  CommandBlade v0.0.2, Halim Mouaziz  ]".center(width))
     main_menu()
 
 
@@ -54,13 +55,12 @@ def console_ui(start_mode=False):
     command = inquirer.text(message="", style=style, qmark="≻≻", amark="≻≻").execute()
     command_name = command.split(' ', 1)[0]
     if command_name in command_dict.keys():
-        parser = command_dict[command_name]
-        run_parser = getattr(core.operations, parser)
+        run_parser = getattr(core.console, command_dict[command_name])
         if command_name != command:
             args = command.split(' ', 1)[-1].split(' ')
             run_parser(args)
         else:
-            run_parser()
+            run_parser(args='0')
     else:
         print(f'{command_name} is not a recognized command. '
               f'\n You can use the "help" command if you need a list of available commands.')

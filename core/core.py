@@ -9,7 +9,7 @@ from core.interface import main_menu
 
 class CommandBlade:
     def __init__(self, plugins: list = []):
-        if plugins != []:
+        if plugins:
             self._plugins = [
                 importlib.import_module(plugin, ".plugins").Plugin() for plugin in plugins
             ]

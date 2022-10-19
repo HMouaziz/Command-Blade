@@ -35,11 +35,11 @@ def time_command(args=None):
     elif args[0] == '-d':
         printy(f'It is {datetime_list[1].strftime("%I:%M %p on %A the %d of %B %G")}.', 'y')
     elif args[0] == '-tz':
-        aware_datetime = get_aware_datetime(args[1])
         if len(args) == 1:
             printy('Timezone must be specified.'.center(get_terminal_width()), '<r')
             print_all_recognised_tz()
         if len(args) == 2:
+            aware_datetime = get_aware_datetime(args[1])
             if args[1] in pytz.all_timezones:
                 printy(f'It is {aware_datetime.strftime("%I:%M:%S %Z on %A the %d of %B %G")}', 'y')
             else:
