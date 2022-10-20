@@ -1,6 +1,7 @@
 import pytz
 from printy import printy
-from core.utils import get_terminal_width, get_datetime_list, get_aware_datetime, print_all_recognised_tz
+from core.utils import get_terminal_width
+from core.console.utils import get_datetime_list, get_aware_datetime, print_all_recognised_tz
 
 
 def exit_command(args=None):

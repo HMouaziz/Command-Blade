@@ -2,8 +2,10 @@ import os
 import sys
 import pytz
 from printy import printy
+
 from core.console.console import executor
-from core.utils import get_datetime_list, get_terminal_width, print_all_recognised_tz, get_aware_datetime
+from core.utils import get_terminal_width
+from core.console.utils import get_datetime_list, get_aware_datetime, print_all_recognised_tz
 
 
 class Command:
@@ -36,7 +38,10 @@ class Exit(Command):
     def feed_executor(cls, args):
         command_name = 'Exit'
         command_dict = {'-': 'main_menu', '-h': 'help', '-f': 'exit',
-                        'help_message': f'\n    Description:   Exits the console and returns to the main menu.\n',
+                        'help_message': f'\n    Description:   Exits the console and returns to the main menu.\n\n    '
+                                        f'Arguments:\n{"":8}-f{"":10}Exit CommandBlade fully as opposed to exiting '
+                                        f'the console & returning to the main menu.\n'
+                                        f'{"":8}-h{"":10}Displays this message.',
                         'arg_error_message': f'{args[0]} is not a recognized argument, you can find a list of valid '
                                              f'arguments by using the "-h" argument.'}
         executor(command_name=command_name, arguments=args, command_dict=command_dict)
@@ -63,6 +68,23 @@ class Help(Command):
     @classmethod
     def help(cls, args):
         printy('help message', 'n')
+
+
+class Ping(Command):
+    @classmethod
+    def feed_executor(cls, args):
+        command_name = 'Ping'
+        command_dict = {'-': 'ping',
+                        'help_message': f'\n    Description:   Sends an echo request to a network host.\n\n    '
+                                        f'Arguments:\n'
+                                        f'{"":8}-h{"":10}Displays this message.',
+                        'arg_error_message': f'{args[0]} is not a recognized argument, you can find a list of valid '
+                                             f'arguments by using the "-h" argument.'}
+        executor(command_name=command_name, arguments=args, command_dict=command_dict)
+
+    @classmethod
+    def ping(cls, args):
+        print('ping is not ready yet!')
 
 
 class Time(Command):

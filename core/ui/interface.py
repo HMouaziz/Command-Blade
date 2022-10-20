@@ -3,8 +3,8 @@ from InquirerPy import inquirer
 from InquirerPy.base.control import Choice
 from pyfiglet import Figlet
 from printy import printy
-from ..console import commands
-from .ui_utils import get_custom_style, get_command_list
+from .utils import get_custom_style
+from ..console.console import organise_console_input, call_command
 from ..utils import get_terminal_width
 
 
@@ -48,27 +48,11 @@ def main_menu():
 
 def console_ui(start_mode=False):
     if start_mode is True:
-        printy("CommandBlade Console [Version 0.1.4]"
+        printy("CommandBlade Console [Version 0.2.5]"
                "\nHalim Mouaziz, Project Hephaestus.", 'o>')
     style = get_custom_style()
-    command = inquirer.text(message="", style=style, qmark="≻≻", amark="≻≻").execute()
-    command_name = command.split(' ', 1)[0]
-    try:
-        if command_name.capitalize() in get_command_list():
-            class_name = getattr(commands, command_name.capitalize())
-            class_instance = class_name()
-            class_instance.run = getattr(class_instance, 'feed_executor')
-            if command_name != command:
-                args = command.split(' ', 1)[-1].split(' ')
-                class_instance.run(args)
-            else:
-                class_instance.run(args='-')
-        else:
-            raise printy(f'{command_name} is not a recognized command. '.center(get_terminal_width()) +
-                         f'\n You can use the "help" command if you need a list of available commands.'
-                         f''.center(get_terminal_width()), '<r')
-    except TypeError:
-        pass
+    console_input = inquirer.text(message="", style=style, qmark="≻≻", amark="≻≻").execute()
+    call_command(organise_console_input(console_input))
     console_ui()
 
 

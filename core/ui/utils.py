@@ -1,7 +1,4 @@
-import inspect
-
 from InquirerPy import get_style
-from core.console import commands
 
 
 def get_custom_style():
@@ -26,11 +23,3 @@ def get_custom_style():
                        "spinner_pattern": "#e5c07b",
                        "spinner_text": ""}, style_override=True)
     return style
-
-
-def get_command_list():
-    c_list = inspect.getmembers(commands, inspect.isclass)
-    command_list = []
-    for i in c_list:
-        command_list.append(i[0])
-    return command_list
