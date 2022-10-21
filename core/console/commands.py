@@ -46,6 +46,27 @@ class Command:
                 print(i)
 
 
+class Calculate(Command):
+    command_name = 'Calculate'
+
+    def __init__(self):
+        super().__init__()
+        self.messages = {'help_message': f'\n    Description:   Calculates the expression given in between "".\n\n    '
+                                         f'Arguments:\n'
+                                         f'{"":8}-h{"":10}Displays this message.',
+                         'argument_error': 'Error: Unrecognized or incomplete command line.'}
+        self.argument_dict = {'arguments': {'-': 'calc', '-h': 'help'},
+                              'modifiers': {}}
+        self.argument_behavior_dict = {'-': {'accepted_modifiers': [], 'modifier_amount': 0, 'data_amount': 1},
+                                       '-h': {'accepted_modifiers': [], 'modifier_amount': 0, 'data_amount': 0}
+                                       }
+
+    @classmethod
+    def calc(cls, input_dict):
+        equation = input_dict['data'][0]
+        printy(eval(equation), 'y')
+
+
 class Cls(Command):
     command_name = 'Cls'
 
@@ -109,6 +130,7 @@ class Help(Command):
     @classmethod
     def help(cls, args):
         printy('help message', 'n')
+
 
 
 class Ping(Command):

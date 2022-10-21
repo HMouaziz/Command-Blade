@@ -4,7 +4,7 @@ from core.utils import get_terminal_width
 
 
 def debugger():
-    call_command(organise_console_input('command -t -b'))
+    call_command(organise_console_input('command -t -b data'))
 
 
 def organise_console_input(console_input):
@@ -28,6 +28,11 @@ def organise_console_input(console_input):
                 else:
                     input_dict['modifiers'].append(i)
                 t += 1
+            elif console_input[0] == '~':
+                console_input.pop(0)
+                data = "".join(console_input)
+                input_dict['data'].append(data)
+                break
             else:
                 input_dict['data'].append(i)
     return input_dict
@@ -59,7 +64,8 @@ def executor(command_name, input_dict):
 
     if input_dict['argument'] not in class_instance.argument_dict['arguments'] \
             or any(_ not in class_instance.argument_dict['modifiers'] for _ in input_dict['modifiers']) \
-            or len(input_dict['modifiers']) > class_instance.argument_behavior_dict[input_dict['argument']]['modifier_amount'] \
+            or len(input_dict['modifiers']) > \
+            class_instance.argument_behavior_dict[input_dict['argument']]['modifier_amount'] \
             or len(input_dict['data']) > class_instance.argument_behavior_dict[input_dict['argument']]['data_amount']:
         printy(class_instance.messages['argument_error'].center(get_terminal_width()), '<r')
     elif '-h' == input_dict['argument']:
