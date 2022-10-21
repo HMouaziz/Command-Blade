@@ -48,7 +48,7 @@ def main_menu():
 
 def console_ui(start_mode=False):
     if start_mode is True:
-        printy("CommandBlade Console [Version 0.2.5]"
+        printy("CommandBlade Console Version 0.2.5"
                "\nHalim Mouaziz, Project Hephaestus.", 'o>')
     style = get_custom_style()
     console_input = inquirer.text(message="", style=style, qmark="≻≻", amark="≻≻").execute()
