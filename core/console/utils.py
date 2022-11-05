@@ -1,4 +1,5 @@
 import inspect
+import subprocess
 import time
 from datetime import datetime
 
@@ -31,3 +32,7 @@ def get_command_list():
     for i in c_list:
         command_list.append(i[0])
     return command_list
+
+
+def open_image(path):
+    subprocess.run(path)

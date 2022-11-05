@@ -1,8 +1,8 @@
 import os
 import sys
 import pytz
+import qrcode
 from printy import printy
-
 from core.console.console import executor
 from core.ui.interface import console_ui
 from core.utils import get_terminal_width
@@ -114,6 +114,30 @@ class Exit(Command):
         main_menu()
 
 
+class Makeqr(Command):
+    command_name = 'Makeqr'
+
+    def __init__(self):
+        super().__init__()
+        self.messages = {'help_message': f'\n    Description:   Generates a QR code from a URL.\n\n    '
+                                         f'Arguments:\n{"":8}-dir{"":10} Lets you choose where the QR code is saved to.'
+                                         f'\n'
+                                         f'{"":8}-h{"":10}Displays this message.',
+                         'argument_error': 'Error: Unrecognized or incomplete command line.'}
+        self.argument_dict = {'arguments': {'-': 'main', '-h': 'help', '-dir': 'main'},
+                              'modifiers': {}}
+        self.argument_behavior_dict = {'-': {'accepted_modifiers': [], 'modifier_amount': 0, 'data_amount': 1},
+                                       '-h': {'accepted_modifiers': [], 'modifier_amount': 0, 'data_amount': 0},
+                                       '-dir': {'accepted_modifiers': [], 'modifier_amount': 0, 'data_amount': 2}
+                                       }
+
+    '''def make_simple_qr(self, input_dict):
+        qr_code = qrcode.make(input_dict['data'][0])
+        type(qr_code)
+        qr_code.save("QR_code_default_name.png")
+        #open_image()'''
+
+
 class Help(Command):
     command_name = 'Help'
 
@@ -130,7 +154,6 @@ class Help(Command):
     @classmethod
     def help(cls, args):
         printy('help message', 'n')
-
 
 
 class Ping(Command):
