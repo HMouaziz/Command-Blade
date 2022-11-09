@@ -1,4 +1,5 @@
 import hashlib
+import sys
 
 
 def hash_string(hash_algorithm, input_string):
@@ -21,3 +22,15 @@ def hash_string(hash_algorithm, input_string):
     else:
         return "Error"
 
+
+def hash_file(hash_algorithm, filepath, buffer_size=65536):
+    hash_algorithm_function = getattr(hashlib, hash_algorithm)
+    file = hash_algorithm_function()
+    with open(filepath, 'rb') as f:
+        while True:
+            data = f.read(buffer_size)
+            if not data:
+                break
+            file.update(data)
+    hashed_file = file
+    return hashed_file

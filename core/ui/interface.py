@@ -1,11 +1,12 @@
+import hashlib
 import sys
 from InquirerPy import inquirer
 from InquirerPy.base.control import Choice
 from pyfiglet import Figlet
 from printy import printy
-from .utils import get_custom_style
+from .utils import get_custom_style, get_input, get_filepath
 from ..console.console import organise_console_input, call_command
-from ..hash_checker.operations import hash_string
+from ..hash_checker.operations import hash_string, hash_file
 from ..utils import get_terminal_width
 
 
@@ -90,7 +91,11 @@ def hash_checker_ui():
         print(hash_string(hash_algorithm, string_input))
         hash_checker_ui()
     elif select == 2:
-        pass
+        hash_algorithm = hash_algorithm_selector_ui()
+        filepath = get_filepath()
+        hashed_file = hash_file(hash_algorithm, filepath)
+        print(hashed_file.hexdigest())
+        hash_checker_ui()
     elif select == 3:
         hash_checker_settings_ui()
     elif select is None:
@@ -120,23 +125,18 @@ def hash_checker_settings_ui():
 def hash_algorithm_selector_ui():
     function = inquirer.fuzzy(
         message="Select which hash algorithm you would like to use.",
-        choices=["MD5", "SHA1", "SHA224", "SHA256", "SHA384", "SHA512", "blake2b", "blake2s"],
+        choices=[Choice(value="md5", name="MD5"),
+                 Choice(value="sha1", name="SHA1"),
+                 Choice(value="sha224", name="SHA224"),
+                 Choice(value="sha256", name="SHA256"),
+                 Choice(value="sha384", name="SHA384"),
+                 Choice(value="sha512", name="SHA512"),
+                 Choice(value="blake2b", name="blake2b"),
+                 Choice(value="blake2s", name="blake2s")
+                 ],
         default="",
     ).execute()
     return function
-
-
-def get_input(is_string, message):
-    style = get_custom_style()
-    data = inquirer.text(message=message, style=style, qmark="≻≻", amark="≻≻").execute()
-    if is_string is True:
-        if isinstance(data, str):
-            return data
-        else:
-            input_string = str(data)
-            return input_string
-    else:
-        return data
 
 
 def settings_ui():
