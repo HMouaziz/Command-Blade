@@ -15,16 +15,16 @@ def hash_string(hash_algorithm, input_string):
         return hashlib.sha384(input_string.encode('utf-8')).hexdigest()
     elif hash_algorithm == "SHA512":
         return hashlib.sha512(input_string.encode('utf-8')).hexdigest()
-    elif hash_algorithm == "blake2b":
+    elif hash_algorithm == "BLAKE2B":
         return hashlib.blake2b(input_string.encode('utf-8')).hexdigest()
-    elif hash_algorithm == "blake2s":
+    elif hash_algorithm == "BLAKE2S":
         return hashlib.blake2s(input_string.encode('utf-8')).hexdigest()
     else:
         return "Error"
 
 
 def hash_file(hash_algorithm, filepath, buffer_size=65536):
-    hash_algorithm_function = getattr(hashlib, hash_algorithm)
+    hash_algorithm_function = getattr(hashlib, hash_algorithm.lower())
     file = hash_algorithm_function()
     with open(filepath, 'rb') as f:
         while True:

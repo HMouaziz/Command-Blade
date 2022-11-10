@@ -1,4 +1,3 @@
-import hashlib
 import sys
 from InquirerPy import inquirer
 from InquirerPy.base.control import Choice
@@ -93,6 +92,7 @@ def hash_checker_ui():
     elif select == 2:
         hash_algorithm = hash_algorithm_selector_ui()
         filepath = get_filepath()
+        print(filepath)
         hashed_file = hash_file(hash_algorithm, filepath)
         print(hashed_file.hexdigest())
         hash_checker_ui()
@@ -131,8 +131,8 @@ def hash_algorithm_selector_ui():
                  Choice(value="sha256", name="SHA256"),
                  Choice(value="sha384", name="SHA384"),
                  Choice(value="sha512", name="SHA512"),
-                 Choice(value="blake2b", name="blake2b"),
-                 Choice(value="blake2s", name="blake2s")
+                 Choice(value="blake2b", name="BLAKE2B"),
+                 Choice(value="blake2s", name="BLAKE2S")
                  ],
         default="",
     ).execute()

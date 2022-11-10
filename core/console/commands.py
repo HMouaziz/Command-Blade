@@ -4,6 +4,7 @@ import pytz
 import qrcode
 from printy import printy
 from core.console.console import executor
+from core.hash_checker.operations import hash_string, hash_file
 from core.ui.interface import console_ui
 from core.utils import get_terminal_width
 from core.console.utils import get_datetime_list, get_aware_datetime, print_all_recognised_tz
@@ -112,6 +113,66 @@ class Exit(Command):
     def main_menu(cls):
         from core.ui.interface import main_menu
         main_menu()
+
+
+class Hash(Command):
+    command_name = 'Hash'
+
+    def __init__(self):
+        super().__init__()
+        self.messages = {'help_message': f'\n    Description:   Creates a hash from the chosen input in the chosen'
+                                         f' algorithm\n\n    '
+                                         f'Arguments:\n{"":8}-md5{"":10}Uses the md5 hash algorithm.\n'
+                                         f'{"":8}-sha1{"":10}Uses the sha1 hash algorithm.\n'
+                                         f'{"":8}-sha224{"":10}Uses the sha224 hash algorithm.\n'
+                                         f'{"":8}-sha256{"":10}Uses the sha256 hash algorithm.\n'
+                                         f'{"":8}-sha384{"":10}Uses the sha384 hash algorithm.\n'
+                                         f'{"":8}-sha512{"":10}Uses the sha512 hash algorithm.\n'
+                                         f'{"":8}-blake2b{"":10}Uses the blake2b hash algorithm.\n'
+                                         f'{"":8}-blake2s{"":10}Uses the blake2s hash algorithm.\n'
+                                         f'{"":8}-h{"":10}Displays this message.',
+                         'argument_error': 'Error: Unrecognized or incomplete command line.'}
+        self.argument_dict = {'arguments': {'-': 'hash_cmd', '-h': 'help', '-md5': 'hash_cmd', '-sha1': 'hash_cmd',
+                                            '-sha224': 'hash_cmd', '-sha256': 'hash_cmd', '-sha384': 'hash_cmd',
+                                            '-sha512': 'hash_cmd', '-blake2b': 'hash_cmd',
+                                            '-blake2s': 'hash_cmd'
+                                            },
+                              'modifiers': {'-s': 'string', '-f': 'file'}}
+        self.argument_behavior_dict = {'-': {'accepted_modifiers': [], 'modifier_amount': 0, 'data_amount': 100},
+                                       '-h': {'accepted_modifiers': [], 'modifier_amount': 0, 'data_amount': 0},
+                                       '-md5': {'accepted_modifiers': ['-s', '-f'], 'modifier_amount': 1,
+                                                'data_amount': 100},
+                                       '-sha1': {'accepted_modifiers': ['-s', '-f'], 'modifier_amount': 1,
+                                                 'data_amount': 100},
+                                       '-sha224': {'accepted_modifiers': ['-s', '-f'], 'modifier_amount': 1,
+                                                   'data_amount': 100},
+                                       '-sha256': {'accepted_modifiers': ['-s', '-f'], 'modifier_amount': 1,
+                                                   'data_amount': 100},
+                                       '-sha384': {'accepted_modifiers': ['-s', '-f'], 'modifier_amount': 1,
+                                                   'data_amount': 100},
+                                       '-sha512': {'accepted_modifiers': ['-s', '-f'], 'modifier_amount': 1,
+                                                   'data_amount': 100},
+                                       '-blake2b': {'accepted_modifiers': ['-s', '-f'], 'modifier_amount': 1,
+                                                    'data_amount': 100},
+                                       '-blake2s': {'accepted_modifiers': ['-s', '-f'], 'modifier_amount': 1,
+                                                    'data_amount': 100},
+                                       }
+
+    @classmethod
+    def hash_cmd(cls, input_dict):
+        algorithm = input_dict['argument'].upper()
+        algorithm = algorithm[1:]
+        if algorithm == '':
+            algorithm = "SHA512"
+        else:
+            pass
+        if not input_dict['modifiers'] or input_dict['modifiers'][0] == '-s':
+            for i in input_dict['data']:
+                printy(hash_string(algorithm, i), 'y')
+        elif input_dict['modifiers'][0] == '-f':
+            for i in input_dict['data']:
+                hashed_file = hash_file(algorithm, i.replace('"', ''))
+                printy(hashed_file.hexdigest(), 'y')
 
 
 class Makeqr(Command):
