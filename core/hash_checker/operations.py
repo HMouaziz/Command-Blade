@@ -1,5 +1,4 @@
 import hashlib
-import sys
 
 
 def hash_string(hash_algorithm, input_string):

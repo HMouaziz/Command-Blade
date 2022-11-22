@@ -7,6 +7,7 @@ from printy import printy
 from core.console.console import executor
 from core.hash_checker.operations import hash_string, hash_file
 from core.ui.interface import console_ui
+from core.ui.utils import get_filepath
 from core.utils import get_terminal_width
 from core.console.utils import get_datetime_list, get_aware_datetime, print_all_recognised_tz
 
@@ -138,24 +139,24 @@ class Hash(Command):
                                             '-sha512': 'hash_cmd', '-blake2b': 'hash_cmd',
                                             '-blake2s': 'hash_cmd'
                                             },
-                              'modifiers': {'-s': 'string', '-f': 'file'}}
+                              'modifiers': {'-s': 'string', '-f': 'file', '-ui': 'use_get_filepath'}}
         self.argument_behavior_dict = {'-': {'accepted_modifiers': [], 'modifier_amount': 0, 'data_amount': 100},
                                        '-h': {'accepted_modifiers': [], 'modifier_amount': 0, 'data_amount': 0},
-                                       '-md5': {'accepted_modifiers': ['-s', '-f'], 'modifier_amount': 1,
+                                       '-md5': {'accepted_modifiers': ['-s', '-f', '-ui'], 'modifier_amount': 2,
                                                 'data_amount': 100},
-                                       '-sha1': {'accepted_modifiers': ['-s', '-f'], 'modifier_amount': 1,
+                                       '-sha1': {'accepted_modifiers': ['-s', '-f', '-ui'], 'modifier_amount': 2,
                                                  'data_amount': 100},
-                                       '-sha224': {'accepted_modifiers': ['-s', '-f'], 'modifier_amount': 1,
+                                       '-sha224': {'accepted_modifiers': ['-s', '-f', '-ui'], 'modifier_amount': 2,
                                                    'data_amount': 100},
-                                       '-sha256': {'accepted_modifiers': ['-s', '-f'], 'modifier_amount': 1,
+                                       '-sha256': {'accepted_modifiers': ['-s', '-f', '-ui'], 'modifier_amount': 2,
                                                    'data_amount': 100},
-                                       '-sha384': {'accepted_modifiers': ['-s', '-f'], 'modifier_amount': 1,
+                                       '-sha384': {'accepted_modifiers': ['-s', '-f', '-ui'], 'modifier_amount': 2,
                                                    'data_amount': 100},
-                                       '-sha512': {'accepted_modifiers': ['-s', '-f'], 'modifier_amount': 1,
+                                       '-sha512': {'accepted_modifiers': ['-s', '-f', '-ui'], 'modifier_amount': 2,
                                                    'data_amount': 100},
-                                       '-blake2b': {'accepted_modifiers': ['-s', '-f'], 'modifier_amount': 1,
+                                       '-blake2b': {'accepted_modifiers': ['-s', '-f', '-ui'], 'modifier_amount': 2,
                                                     'data_amount': 100},
-                                       '-blake2s': {'accepted_modifiers': ['-s', '-f'], 'modifier_amount': 1,
+                                       '-blake2s': {'accepted_modifiers': ['-s', '-f', '-ui'], 'modifier_amount': 2,
                                                     'data_amount': 100},
                                        }
 
@@ -174,6 +175,13 @@ class Hash(Command):
             for i in input_dict['data']:
                 hashed_file = hash_file(algorithm, i.replace('"', ''))
                 printy(hashed_file.hexdigest(), 'y')
+        elif input_dict['modifiers'][0] == '-ui':
+            path = get_filepath()
+            hashed_file = hash_file(algorithm, path)
+            printy(hashed_file.hexdigest(), 'y')
+        else:
+            printy(f'Error: Unrecognized or incomplete command line.'
+                   f''.center(get_terminal_width()), '<r')
 
 
 class Makeqr(Command):
@@ -192,7 +200,8 @@ class Makeqr(Command):
                                        '-h': {'accepted_modifiers': [], 'modifier_amount': 0, 'data_amount': 0}
                                        }
 
-    def make_qr_code(self, input_dict):
+    @classmethod
+    def simple_qr(cls, input_dict):
         url = pyqrcode.create(input_dict['data'][0])
         with open('qrcode.png', 'wb') as fstream:
             url.png(fstream, scale=5)
