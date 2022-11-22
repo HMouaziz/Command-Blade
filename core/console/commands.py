@@ -1,7 +1,8 @@
+import io
 import os
 import sys
+import pyqrcode as pyqrcode
 import pytz
-import qrcode
 from printy import printy
 from core.console.console import executor
 from core.hash_checker.operations import hash_string, hash_file
@@ -185,18 +186,20 @@ class Makeqr(Command):
                                          f'\n'
                                          f'{"":8}-h{"":10}Displays this message.',
                          'argument_error': 'Error: Unrecognized or incomplete command line.'}
-        self.argument_dict = {'arguments': {'-': 'main', '-h': 'help', '-dir': 'main'},
+        self.argument_dict = {'arguments': {'-': 'make_qr_code', '-h': 'help'},
                               'modifiers': {}}
         self.argument_behavior_dict = {'-': {'accepted_modifiers': [], 'modifier_amount': 0, 'data_amount': 1},
-                                       '-h': {'accepted_modifiers': [], 'modifier_amount': 0, 'data_amount': 0},
-                                       '-dir': {'accepted_modifiers': [], 'modifier_amount': 0, 'data_amount': 2}
+                                       '-h': {'accepted_modifiers': [], 'modifier_amount': 0, 'data_amount': 0}
                                        }
 
-    '''def make_simple_qr(self, input_dict):
-        qr_code = qrcode.make(input_dict['data'][0])
-        type(qr_code)
-        qr_code.save("QR_code_default_name.png")
-        #open_image()'''
+    def make_qr_code(self, input_dict):
+        url = pyqrcode.create(input_dict['data'][0])
+        with open('qrcode.png', 'wb') as fstream:
+            url.png(fstream, scale=5)
+        url.png('qrcode.png', scale=5)
+        buffer = io.BytesIO()
+        url.png(buffer)
+        print(list(buffer.getvalue()))
 
 
 class Help(Command):

@@ -11,40 +11,35 @@ def debugger():
 
 def organise_console_input(console_input):
     exception_list = ['calculate']
-    input_dict = {'command': '', 'argument': '-', 'modifiers': [], 'data': []}
-    quoted_input_list = re.findall('"[^"]*[^"]*"', console_input)
-    split_console_input = console_input.split(' ')
-    command = split_console_input.pop(0)
-    input_dict['command'] = command
-    if command in exception_list:
-        input_dict['command'] = split_console_input.pop(0)
-        data = "".join(split_console_input)
-        input_dict['data'].append(data)
-    else:
-        if quoted_input_list:
-            split_console_input = []
-            for i in quoted_input_list:
-                quote_stripped_console_input = console_input.replace(i, '[*placeholder*]')
-                console_input = quote_stripped_console_input
-            split_console_input = console_input.split(' ')
-            split_console_input.pop(0)
-            lenght = len(split_console_input)
-        if len(split_console_input) == 0:
-            pass
-        elif len(split_console_input) > 0:
-            x, y = 0, 0
-            for i in split_console_input:
-                if i[0] == '-':
-                    if x == 0:
-                        input_dict['argument'] = i
+    input_dict = {'command': console_input.split(" ", 1).pop(0), 'argument': '-', 'modifiers': [], 'data': []}
+    data_list = re.findall('\"[^\"]*[^\"]\"', console_input)
+    if len(console_input.split(' ')) > 1:
+        console_input = console_input.split(" ", 1)[1]
+        if input_dict['command'] in exception_list:  # Will need update as more commands are added to exception list.
+            input_dict['data'].append(console_input)
+        else:
+            if data_list:
+                for i in data_list:
+                    updated_console_input = console_input.replace(i, '[*placeholder*]')
+                    console_input = updated_console_input
+            if len(console_input.split(' ')) == 0:
+                pass
+            elif len(console_input.split(' ')) > 0:
+                x, y = 0, 0
+                for i in console_input.split(' '):
+                    if i[0] == '-':
+                        if x == 0:
+                            input_dict['argument'] = i
+                        else:
+                            input_dict['modifiers'].append(i)
+                        x += 1
+                    elif i == '[*placeholder*]':
+                        input_dict['data'].append(data_list[y])
+                        y += 1
                     else:
-                        input_dict['modifiers'].append(i)
-                    x += 1
-                elif i == '[*placeholder*]':
-                    input_dict['data'].append(quoted_input_list[y])
-                    y += 1
-                else:
-                    input_dict['data'].append(i)
+                        input_dict['data'].append(i)
+    else:
+        pass
     return input_dict
 
 
