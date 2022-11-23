@@ -1,14 +1,15 @@
+import os
 import sys
 from InquirerPy import inquirer
 from InquirerPy.base.control import Choice
 from InquirerPy.validator import EmptyInputValidator
 from pyfiglet import Figlet
 from printy import printy
-from .utils import get_custom_style, get_input, get_filepath
+from .utils import get_custom_style, get_input, get_filepath, get_settings, update_settings, clear_screen
 from ..console.console import organise_console_input, call_command
 from ..hash_checker.operations import hash_string, hash_file
 from ..password_generator.operations import generate_password
-from ..password_generator.utils import get_password_generator_settings, update_password_generator_settings
+from ..qr_code_generator.operations import generate_qr_code
 from ..utils import get_terminal_width
 
 
@@ -16,7 +17,7 @@ def start():
     width = get_terminal_width()
     m = Figlet(font='slant', width=width)
     printy(m.renderText("CommandBlade"), 'o')
-    print("[  CommandBlade v0.0.2, Halim Mouaziz  ]".center(width))
+    print("[  CommandBlade v0.0.3, Halim Mouaziz  ]".center(width))
     main_menu()
 
 
@@ -31,7 +32,8 @@ def main_menu():
             Choice(value=3, name="Network Tools Mode"),
             Choice(value=4, name="Hash Checker"),
             Choice(value=5, name="Password Generator"),
-            Choice(value=6, name="Settings"),
+            Choice(value=6, name="QR Code Generator"),
+            Choice(value=7, name="Settings"),
             Choice(value=None, name="Exit"),
         ],
         default=None,
@@ -50,6 +52,8 @@ def main_menu():
     elif mode == 5:
         password_generator_ui()
     elif mode == 6:
+        qr_code_generator_ui()
+    elif mode == 7:
         settings_ui()
     elif mode is None:
         print("Exiting...")
@@ -58,7 +62,7 @@ def main_menu():
 
 def console_ui(start_mode=False):
     if start_mode is True:
-        printy("CommandBlade Console Version 0.2.5"
+        printy("CommandBlade Console Version 0.3.6"
                "\nHalim Mouaziz, Project Hephaestus.", 'o>')
     style = get_custom_style()
     console_input = inquirer.text(message="", style=style, qmark="≻≻", amark="≻≻").execute()
@@ -161,13 +165,14 @@ def password_generator_ui():
         amark="≻≻"
     ).execute()
     if select == 1:
-        settings = get_password_generator_settings()
+        settings = get_settings()
         printy(generate_password(settings['p_type'],
                                  settings['length'],
                                  settings['use_capitals'],
                                  settings['use_digits'],
                                  settings['use_symbols']
                                  ), 'y')
+        password_generator_ui()
     elif select == 2:
         password_generator_settings_ui()
     elif select is None:
@@ -177,7 +182,7 @@ def password_generator_ui():
 def password_generator_settings_ui():
     style = get_custom_style()
     message = ""
-    settings = get_password_generator_settings()
+    settings = get_settings()
     select = inquirer.select(
         message=message,
         choices=[
@@ -196,7 +201,7 @@ def password_generator_settings_ui():
             message="Enter desired password length:",
             validate=EmptyInputValidator(),
         ).execute()
-        update_password_generator_settings(settings)
+        update_settings(settings)
     elif select == 2:
         settings['p_type'] = inquirer.select(
             message='Select type:',
@@ -208,7 +213,7 @@ def password_generator_settings_ui():
             qmark="≻≻",
             amark="≻≻"
         ).execute()
-        update_password_generator_settings(settings)
+        update_settings(settings)
     elif select == 3:
         selection = inquirer.checkbox(
             message="Select:",
@@ -233,10 +238,221 @@ def password_generator_settings_ui():
             settings["use_symbols"] = True
         elif 3 not in selection:
             settings["use_symbols"] = False
-        update_password_generator_settings(settings)
+        update_settings(settings)
     elif select is None:
         password_generator_ui()
     password_generator_settings_ui()
+
+
+def qr_code_generator_ui():
+    settings = get_settings()
+    style = get_custom_style()
+    select = inquirer.select(
+        message='',
+        choices=[
+            Choice(value=1, name="Create QR Code"),
+            Choice(value=2, name="Settings"),
+            Choice(value=None, name="Exit")
+        ],
+        style=style,
+        qmark="≻≻",
+        amark="≻≻",
+        default=None
+    ).execute()
+    if select == 1:
+        data = inquirer.text(message='Enter data:', style=style, qmark="≻≻", amark="≻≻",).execute()
+        request = {'data': data,
+                   'advanced_mode': settings['qr_s_advanced_mode'],
+                   'encode_settings': {"error_correction_level": settings['qr_e_error_correction_level'],
+                                       "version": settings['qr_e_version'],
+                                       "encoding_mode": settings['qr_e_encoding_mode'],
+                                       },
+                   'render_settings': {"quiet_zone": settings['qr_r_quiet_zone'],
+                                       "module_color": settings['qr_r_module_color'],
+                                       "background_color": settings['qr_r_background_color'],
+                                       "scale": settings['qr_r_scale']}
+                   }
+        generate_qr_code(request)
+        qr_code_generator_ui()
+    elif select == 2:
+        qr_code_generator_settings_ui(settings)
+    elif select is None:
+        main_menu()
+
+
+def qr_code_generator_settings_ui(settings):
+    if settings['qr_s_advanced_mode'] is True:
+        advanced_setting = "Disable Advanced Mode"
+    else:
+        advanced_setting = "Enable Advanced Mode"
+    style = get_custom_style()
+    select = inquirer.select(
+        message='',
+        choices=[
+            Choice(value=1, name=advanced_setting),
+            Choice(value=2, name="Encoding Settings"),
+            Choice(value=3, name="Rendering Settings"),
+            Choice(value=None, name="Exit")
+        ],
+        style=style,
+        qmark="≻≻",
+        amark="≻≻",
+        default=None
+    ).execute()
+    if select == 1:
+        adv = settings['qr_s_advanced_mode']
+        settings['qr_s_advanced_mode'] = not adv
+        update_settings(settings)
+        updated_settings = get_settings()
+        qr_code_generator_settings_ui(updated_settings)
+    elif select == 2:
+        qr_code_encoding_settings_ui(settings)
+    elif select == 3:
+        qr_code_rendering_settings_ui(settings)
+    elif select is None:
+        qr_code_generator_ui()
+
+
+def qr_code_encoding_settings_ui(settings):
+    style = get_custom_style()
+    select = inquirer.select(
+        message='',
+        choices=[
+            Choice(value=1, name=f"Change Correction Level from [{settings['qr_e_error_correction_level']}]"),
+            Choice(value=2, name=f"Change Version Size from [{settings['qr_e_version']}]"),
+            Choice(value=3, name=f"Change Encoding Mode from [{settings['qr_e_encoding_mode']}]"),
+            Choice(value=4, name="Settings Information"),
+            Choice(value=None, name="Exit")
+        ],
+        style=style,
+        qmark="≻≻",
+        amark="≻≻",
+        default=None
+    ).execute()
+    if select == 1:
+        c_level = inquirer.select(
+            message='Select correction level:',
+            choices=[
+                Choice(value='H', name="H (Default)"),
+                Choice(value='Q', name="Q"),
+                Choice(value='M', name="M"),
+                Choice(value='L', name="L")
+            ],
+            style=style,
+            qmark="≻≻",
+            amark="≻≻",
+            default=1
+        ).execute()
+        settings['qr_e_error_correction_level'] = c_level
+        update_settings(settings)
+        updated_settings = get_settings()
+        qr_code_encoding_settings_ui(updated_settings)
+    elif select == 2:
+        version = inquirer.number(message="Enter Version Size:", max_allowed=40, min_allowed=1, style=style, qmark="≻≻",
+                                  amark="≻≻").execute()
+        settings['qr_e_version'] = version
+        update_settings(settings)
+        updated_settings = get_settings()
+        qr_code_encoding_settings_ui(updated_settings)
+    elif select == 3:
+        e_mode = inquirer.select(
+            message='Select encoding mode:',
+            choices=[
+                Choice(value='numeric', name="Numeric"),
+                Choice(value='alphanumeric', name="Alphanumeric"),
+                Choice(value='kanji', name="Kanji"),
+                Choice(value='binary', name="Binary")
+            ],
+            style=style,
+            qmark="≻≻",
+            amark="≻≻",
+            default=1
+        ).execute()
+        settings['qr_e_encoding_mode'] = e_mode
+        update_settings(settings)
+        updated_settings = get_settings()
+        qr_code_encoding_settings_ui(updated_settings)
+    elif select == 4:
+        printy(f'Correction level:\n'
+               f'Sets the error correction level of the code. Each level has an associated name given by a letter: '
+               f'L, M, Q, or H; each level can correct up to 7, 15, 25, or 30 percent of the data respectively.\n'
+               f'Version size:\n'
+               f'Specifies the size and data capacity of the code. Versions are any integer between 1 and 40. '
+               f'Where version 1 is the smallest QR code, and version 40 is the largest. By default, the object uses '
+               f'the data’s encoding and error correction level to calculate the smallest possible version.\n'
+               f'Encoding mode:\n'
+               f'Sets how the contents will be encoded. By default, the most efficient encoding is used for the '
+               f'contents.\n', 'g')
+        back = inquirer.select(message='', choices=[Choice(value=None, name="Back")], style=style, qmark="≻≻",
+                               amark="≻≻", default=None).execute()
+        if back is None:
+            clear_screen()
+            qr_code_encoding_settings_ui(settings)
+    elif select is None:
+        qr_code_generator_settings_ui(settings)
+
+
+def qr_code_rendering_settings_ui(settings):
+    style = get_custom_style()
+    select = inquirer.select(
+        message='',
+        choices=[
+            Choice(value=1, name=f"Change QR Color from [{settings['qr_r_module_color']}]"),
+            Choice(value=2, name=f"Change Background Color from[{settings['qr_r_background_color']}]"),
+            Choice(value=3, name=f"Change Scale from [{settings['qr_r_scale']}]"),
+            Choice(value=4, name=f"Change Quiet Zone from [{settings['qr_r_quiet_zone']}]"),
+            Choice(value=5, name="Settings Information"),
+            Choice(value=None, name="Exit")
+        ],
+        style=style,
+        qmark="≻≻",
+        amark="≻≻",
+        default=None
+    ).execute()
+    if select == 1:
+        pass
+        '''settings['qr_e_error_correction_level'] = c_level
+        update_settings(settings)
+        updated_settings = get_settings()
+        qr_code_encoding_settings_ui(updated_settings)'''
+    elif select == 2:
+        pass
+        '''settings['qr_e_version'] = version
+        update_settings(settings)
+        updated_settings = get_settings()
+        qr_code_encoding_settings_ui(updated_settings)'''
+    elif select == 3:
+        scale = inquirer.number(message="Enter Version Size:", max_allowed=40, min_allowed=1, style=style, qmark="≻≻",
+                                amark="≻≻").execute()
+        settings['qr_e_version'] = scale
+        update_settings(settings)
+        updated_settings = get_settings()
+        qr_code_encoding_settings_ui(updated_settings)
+    elif select == 4:
+        q_zone = inquirer.number(message="Enter Version Size:", max_allowed=40, min_allowed=1, style=style, qmark="≻≻",
+                                 amark="≻≻").execute()
+        settings['qr_e_version'] = q_zone
+        update_settings(settings)
+        updated_settings = get_settings()
+        qr_code_encoding_settings_ui(updated_settings)
+    elif select == 5:
+        printy(f'Correction level:\n'
+               f'Sets the error correction level of the code. Each level has an associated name given by a letter: '
+               f'L, M, Q, or H; each level can correct up to 7, 15, 25, or 30 percent of the data respectively.\n'
+               f'Version size:\n'
+               f'Specifies the size and data capacity of the code. Versions are any integer between 1 and 40. '
+               f'Where version 1 is the smallest QR code, and version 40 is the largest. By default, the object uses '
+               f'the data’s encoding and error correction level to calculate the smallest possible version.\n'
+               f'Encoding mode:\n'
+               f'Sets how the contents will be encoded. By default, the most efficient encoding is used for the '
+               f'contents.\n', 'g')
+        back = inquirer.select(message='', choices=[Choice(value=None, name="Back")], style=style, qmark="≻≻",
+                               amark="≻≻", default=None).execute()
+        if back is None:
+            clear_screen()
+            qr_code_encoding_settings_ui(settings)
+    elif select is None:
+        qr_code_generator_settings_ui(settings)
 
 
 def settings_ui():

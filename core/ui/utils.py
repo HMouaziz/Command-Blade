@@ -1,3 +1,6 @@
+import json
+import os
+
 from InquirerPy import get_style, inquirer
 import tkinter
 from tkinter import filedialog
@@ -45,3 +48,18 @@ def get_filepath():
     filepath = filedialog.askopenfilename()
     return filepath
 
+
+def get_settings():
+    with open('settings.json', 'r') as f:
+        settings = json.load(f)
+    return settings
+
+
+def update_settings(settings):
+    with open('settings.json', 'w', encoding='utf-8') as f:
+        json.dump(settings, f, ensure_ascii=False, indent=4)
+
+
+def clear_screen():
+    clear = lambda: os.system('cls')
+    clear()

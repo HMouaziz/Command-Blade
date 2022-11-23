@@ -1,7 +1,33 @@
 {
     "p_type": "Char",
-    "length": "12",
+    "length": "32",
     "use_capitals": true,
     "use_digits": true,
-    "use_symbols": false
+    "use_symbols": false,
+    "qr_s_advanced_mode": false,
+    "qr_e_error_correction_level": "H",
+    "qr_e_version": "5",
+    "qr_e_encoding_mode": "binary",
+    "qr_r_quiet_zone": 1,
+    "qr_r_module_color": {
+        "PNG": [
+            255,
+            255,
+            255,
+            255
+        ],
+        "SVG": "#ffffff",
+        "EPS": ""
+    },
+    "qr_r_background_color": {
+        "PNG": [
+            0,
+            0,
+            0,
+            255
+        ],
+        "SVG": "#000000",
+        "EPS": ""
+    },
+    "qr_r_scale": "5"
 }

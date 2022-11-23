@@ -194,7 +194,7 @@ class Makeqr(Command):
                                          f'\n'
                                          f'{"":8}-h{"":10}Displays this message.',
                          'argument_error': 'Error: Unrecognized or incomplete command line.'}
-        self.argument_dict = {'arguments': {'-': 'make_qr_code', '-h': 'help'},
+        self.argument_dict = {'arguments': {'-': 'simple_qr', '-h': 'help'},
                               'modifiers': {}}
         self.argument_behavior_dict = {'-': {'accepted_modifiers': [], 'modifier_amount': 0, 'data_amount': 1},
                                        '-h': {'accepted_modifiers': [], 'modifier_amount': 0, 'data_amount': 0}

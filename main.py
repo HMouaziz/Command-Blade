@@ -1,4 +1,4 @@
-from core.password_generator import operations
+from core.qr_code_generator import operations
 from core.core import CommandBlade
 from core.console import console
 
