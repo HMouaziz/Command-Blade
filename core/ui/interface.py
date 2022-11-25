@@ -5,7 +5,8 @@ from InquirerPy.base.control import Choice
 from InquirerPy.validator import EmptyInputValidator
 from pyfiglet import Figlet
 from printy import printy
-from .utils import get_custom_style, get_input, get_filepath, get_settings, update_settings, clear_screen
+from .utils import get_custom_style, get_input, get_filepath, get_settings, update_settings, clear_screen, \
+    get_color_picker
 from ..console.console import organise_console_input, call_command
 from ..hash_checker.operations import hash_string, hash_file
 from ..password_generator.operations import generate_password
@@ -348,8 +349,8 @@ def qr_code_encoding_settings_ui(settings):
         updated_settings = get_settings()
         qr_code_encoding_settings_ui(updated_settings)
     elif select == 2:
-        version = inquirer.number(message="Enter Version Size:", max_allowed=40, min_allowed=1, style=style, qmark="≻≻",
-                                  amark="≻≻").execute()
+        version = int(inquirer.number(message="Enter Version Size:", max_allowed=40, min_allowed=1, style=style,
+                                      qmark="≻≻", amark="≻≻").execute())
         settings['qr_e_version'] = version
         update_settings(settings)
         updated_settings = get_settings()
@@ -410,47 +411,49 @@ def qr_code_rendering_settings_ui(settings):
         default=None
     ).execute()
     if select == 1:
-        pass
-        '''settings['qr_e_error_correction_level'] = c_level
+        n_color = get_color_picker(settings['qr_r_module_color'])
+        settings['qr_r_module_color'] = n_color
         update_settings(settings)
         updated_settings = get_settings()
-        qr_code_encoding_settings_ui(updated_settings)'''
+        qr_code_rendering_settings_ui(updated_settings)
     elif select == 2:
-        pass
-        '''settings['qr_e_version'] = version
+        b_color = get_color_picker(settings['qr_r_background_color'])
+        settings['qr_r_background_color'] = b_color
         update_settings(settings)
         updated_settings = get_settings()
-        qr_code_encoding_settings_ui(updated_settings)'''
+        qr_code_rendering_settings_ui(updated_settings)
     elif select == 3:
-        scale = inquirer.number(message="Enter Version Size:", max_allowed=40, min_allowed=1, style=style, qmark="≻≻",
-                                amark="≻≻").execute()
-        settings['qr_e_version'] = scale
+        scale = int(inquirer.number(message="Enter Scale:", min_allowed=1, style=style, qmark="≻≻",
+                                    amark="≻≻").execute())
+        settings['qr_r_scale'] = scale
         update_settings(settings)
         updated_settings = get_settings()
-        qr_code_encoding_settings_ui(updated_settings)
+        qr_code_rendering_settings_ui(updated_settings)
     elif select == 4:
-        q_zone = inquirer.number(message="Enter Version Size:", max_allowed=40, min_allowed=1, style=style, qmark="≻≻",
-                                 amark="≻≻").execute()
-        settings['qr_e_version'] = q_zone
+        q_zone = int(inquirer.number(message="Enter Quiet Zone Size:", min_allowed=1, style=style, qmark="≻≻",
+                                     amark="≻≻").execute())
+        settings['qr_r_quiet_zone'] = q_zone
         update_settings(settings)
         updated_settings = get_settings()
-        qr_code_encoding_settings_ui(updated_settings)
+        qr_code_rendering_settings_ui(updated_settings)
     elif select == 5:
-        printy(f'Correction level:\n'
-               f'Sets the error correction level of the code. Each level has an associated name given by a letter: '
-               f'L, M, Q, or H; each level can correct up to 7, 15, 25, or 30 percent of the data respectively.\n'
-               f'Version size:\n'
-               f'Specifies the size and data capacity of the code. Versions are any integer between 1 and 40. '
-               f'Where version 1 is the smallest QR code, and version 40 is the largest. By default, the object uses '
-               f'the data’s encoding and error correction level to calculate the smallest possible version.\n'
-               f'Encoding mode:\n'
-               f'Sets how the contents will be encoded. By default, the most efficient encoding is used for the '
-               f'contents.\n', 'g')
+        printy(f'QR Color:\n'
+               f'The color of the QR modules.\n'
+               f'Background Color:\n'
+               f'The color of the background of the QR code.\n'
+               f'Scale:\n'
+               f'The size of a single data module in pixels. Setting this parameter to one, will result in each data '
+               f'module taking up 1 pixel. In other words, the QR code would be too small to scan. What scale to use '
+               f'depends on how you plan to use the QR code. Generally, three, four, or five will result in small but'
+               f' scanable QR codes.\n'
+               f'Quiet Zone:\n'
+               f'An empty area around the QR code. The area is the background module in color. '
+               f'According to the standard this area should be four modules wide.', 'g')
         back = inquirer.select(message='', choices=[Choice(value=None, name="Back")], style=style, qmark="≻≻",
                                amark="≻≻", default=None).execute()
         if back is None:
             clear_screen()
-            qr_code_encoding_settings_ui(settings)
+            qr_code_rendering_settings_ui(settings)
     elif select is None:
         qr_code_generator_settings_ui(settings)
 

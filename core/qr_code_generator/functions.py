@@ -49,10 +49,16 @@ def save_qr_render(data, render_settings, advanced_mode):
         data.svg(buffer)
         printy("QR Code saved successfully.", 'y')
     elif extension == '.eps':
-        data.eps(filepath, scale=render_settings['scale'],
-                 module_color=render_settings['module_color']['EPS'],
-                 background=render_settings['background_color']['EPS'],
-                 quiet_zone=render_settings['quiet_zone'])
+        if render_settings['module_color']['EPS'] == render_settings['background_color']['EPS']:
+            data.eps(filepath, scale=render_settings['scale'],
+                     module_color=render_settings['module_color']['EPS'],
+                     background=None,
+                     quiet_zone=render_settings['quiet_zone'])
+        else:
+            data.eps(filepath, scale=render_settings['scale'],
+                     module_color=render_settings['module_color']['EPS'],
+                     background=render_settings['background_color']['EPS'],
+                     quiet_zone=render_settings['quiet_zone'])
         out = io.StringIO()
         data.eps(out)
         printy("QR Code saved successfully.", 'y')
