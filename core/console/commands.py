@@ -1,3 +1,5 @@
+"""This file contains the Command class and its subclasses """
+
 import io
 import os
 import sys
@@ -6,9 +8,8 @@ import pytz
 from printy import printy
 from core.console.console import executor
 from plugins.hash_generator import hash_string, hash_file
-from core.ui.interface import console_ui
-from core.ui.utils import get_filepath
-from core.utils import get_terminal_width
+from core.interface import console_ui, get_filepath
+from core.functions import get_terminal_width
 from core.console.utils import get_datetime_list, get_aware_datetime, print_all_recognised_tz
 
 
@@ -113,7 +114,7 @@ class Exit(Command):
 
     @classmethod
     def main_menu(cls):
-        from core.ui.interface import main_menu
+        from core.interface import main_menu
         main_menu()
 
 

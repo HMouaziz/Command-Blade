@@ -1,11 +1,11 @@
+"""This file contains standardised functions that can be used by plugins and the core program."""
+
 import importlib
 import json
 import os
 from os import listdir
 from os.path import isfile, join
 from InquirerPy.base import Choice
-from printy import printy
-from pyfiglet import Figlet
 
 
 def get_terminal_width():
@@ -13,13 +13,6 @@ def get_terminal_width():
         return os.get_terminal_size().columns
     except OSError:
         return 80
-
-
-def display_start_message(message):
-    width = get_terminal_width()
-    m = Figlet(font='slant', width=width)
-    printy(m.renderText("CommandBlade"), 'o')
-    print(message.center(width))
 
 
 def get_plugins(start=False):

@@ -4,9 +4,8 @@ from InquirerPy import inquirer
 from InquirerPy.base import Choice
 from InquirerPy.validator import EmptyInputValidator
 from printy import printy
-from core.ui.interface import main_menu
-from core.ui.utils import get_custom_style
-from core.utils import get_settings, update_settings, get_menu_list
+from core.interface import main_menu, get_custom_style
+from core.functions import get_settings, update_settings, get_menu_list
 
 
 class Plugin:

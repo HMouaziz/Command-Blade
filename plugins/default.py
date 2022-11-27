@@ -1,5 +1,5 @@
-from core.ui.interface import main_menu
-from core.utils import get_hooks, create_menu_list, display_start_message
+from core.interface import main_menu, display_start_message
+from core.functions import get_hooks, create_menu_list
 
 
 class Plugin:
@@ -13,5 +13,5 @@ class Plugin:
     def process(self):
         hooks = get_hooks()
         create_menu_list(hooks)
-        display_start_message("[  CommandBlade v0.1.5, Halim Mouaziz  ]")
+        display_start_message("[  CommandBlade v0.1.6, Halim Mouaziz  ]")
         main_menu(self.choices, self.instruction_data)

@@ -1,5 +1,5 @@
 from core.core import CommandBlade
-from core.utils import get_plugins
+from core.functions import get_plugins
 from core.console import console
 
 if __name__ == '__main__':

@@ -7,9 +7,8 @@ from tkinter import filedialog
 from InquirerPy import inquirer
 from InquirerPy.base import Choice
 from printy import printy
-from core.ui.interface import main_menu
-from core.ui.utils import get_custom_style, save_error_prompt, clear_screen, get_color_picker
-from core.utils import get_settings, get_terminal_width, get_filetype, update_settings, get_menu_list
+from core.interface import main_menu, get_custom_style, clear_screen, get_color_picker, save_error_prompt
+from core.functions import get_settings, get_terminal_width, get_filetype, update_settings, get_menu_list
 
 
 class Plugin:

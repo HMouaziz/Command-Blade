@@ -1,3 +1,5 @@
+"""This file contains functions that are related to the console engine and the commands included in the core program"""
+
 import inspect
 import subprocess
 import time

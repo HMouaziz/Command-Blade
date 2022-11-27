@@ -1,9 +1,8 @@
 import hashlib
 from InquirerPy import inquirer
 from InquirerPy.base import Choice
-from core.ui.interface import main_menu
-from core.ui.utils import get_custom_style, get_input, get_filepath
-from core.utils import get_menu_list
+from core.interface import main_menu, get_custom_style, get_input, get_filepath
+from core.functions import get_menu_list
 
 
 class Plugin:

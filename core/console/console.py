@@ -1,8 +1,9 @@
-import re
+"""This file contains the console's engine"""
 
+import re
 from printy import printy
 from core.console.utils import get_command_list
-from core.utils import get_terminal_width
+from core.functions import get_terminal_width
 
 
 def debugger():

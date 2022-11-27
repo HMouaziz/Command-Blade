@@ -1,13 +1,60 @@
-import os
-from tkinter.messagebox import askokcancel
+"""This file contains all main functions that are related to the UI aspect of the program"""
 
-from InquirerPy import get_style, inquirer
+import importlib
+import os
+import sys
 import tkinter
 from tkinter import filedialog
-
+from tkinter.messagebox import askokcancel
+from InquirerPy import inquirer, get_style
+from printy import printy
+from pyfiglet import Figlet
 from tkcolorpicker import askcolor
+from core.console.console import organise_console_input, call_command
+from core.functions import convert_hex, get_terminal_width
 
-from core.utils import convert_hex
+
+def main_menu(choices, instruction_data):
+    style = get_custom_style()
+    message = "Select Mode:"
+    mode = inquirer.select(
+        message=message,
+        choices=choices,
+        default=None,
+        style=style,
+        qmark="≻≻",
+        amark="≻≻"
+    ).execute()
+    if mode == 'console':
+        console_ui(start_mode=True)
+    elif mode == 'settings':
+        settings_ui()
+    elif mode is None:
+        print("Exiting...")
+        sys.exit(1)
+    else:
+        for i in instruction_data:
+            if mode == i:
+                module_name = ''.join(('.', instruction_data[i]['module']))
+                module = importlib.import_module(module_name, "plugins")
+                class_name = getattr(module, instruction_data[i]['class'])
+                class_instance = class_name()
+                class_instance.run = getattr(class_instance, instruction_data[i]['method'])
+                class_instance.run()
+
+
+def console_ui(start_mode=False):
+    if start_mode is True:
+        printy("CommandBlade Console Version 0.3.6"
+               "\nHalim Mouaziz, Project Hephaestus.", 'o>')
+    style = get_custom_style()
+    console_input = inquirer.text(message="", style=style, qmark="≻≻", amark="≻≻").execute()
+    call_command(input_dict=organise_console_input(console_input))
+    console_ui()
+
+
+def settings_ui():
+    pass
 
 
 def get_custom_style():
@@ -69,3 +116,10 @@ def get_color_picker(color_dict):
 def save_error_prompt():
     answer = askokcancel(title='Error', message='The filepath you selected was not recognised.')
     return answer
+
+
+def display_start_message(message):
+    width = get_terminal_width()
+    m = Figlet(font='slant', width=width)
+    printy(m.renderText("CommandBlade"), 'o')
+    print(message.center(width))
