@@ -4,8 +4,8 @@ from InquirerPy import inquirer
 from InquirerPy.base import Choice
 from InquirerPy.validator import EmptyInputValidator
 from printy import printy
-from core.interface import main_menu, get_custom_style
-from core.functions import get_settings, update_settings, get_menu_list
+from core.interface import Interface
+from core.functions import Settings
 
 
 class Plugin:
@@ -28,7 +28,7 @@ class PasswordGenerator:
     style = None
 
     def __init__(self):
-        self.style = get_custom_style()
+        self.style = Interface.get_custom_style()
 
     @classmethod
     def password_generator_ui(cls):
@@ -46,7 +46,7 @@ class PasswordGenerator:
             amark="≻≻"
         ).execute()
         if select == 1:
-            settings = get_settings()
+            settings = Settings.get()
             printy(generate_password(settings['p_type'],
                                      settings['length'],
                                      settings['use_capitals'],
@@ -57,8 +57,8 @@ class PasswordGenerator:
         elif select == 2:
             cls.password_generator_settings_ui()
         elif select is None:
-            choices, instruction_data = get_menu_list()
-            main_menu(choices, instruction_data)
+            choices, instruction_data = Interface.get_menu_list()
+            Interface.main_menu(choices, instruction_data)
 
     @classmethod
     def password_generator_settings_ui(cls):
@@ -82,7 +82,7 @@ class PasswordGenerator:
                 message="Enter desired password length:",
                 validate=EmptyInputValidator(),
             ).execute()
-            update_settings(settings)
+            Settings.update(settings)
         elif select == 2:
             settings['p_type'] = inquirer.select(
                 message='Select type:',
@@ -94,7 +94,7 @@ class PasswordGenerator:
                 qmark="≻≻",
                 amark="≻≻"
             ).execute()
-            update_settings(settings)
+            Settings.update(settings)
         elif select == 3:
             selection = inquirer.checkbox(
                 message="Select:",
@@ -119,7 +119,7 @@ class PasswordGenerator:
                 settings["use_symbols"] = True
             elif 3 not in selection:
                 settings["use_symbols"] = False
-            update_settings(settings)
+            Settings.update(settings)
         elif select is None:
             cls.password_generator_ui()
         cls.password_generator_settings_ui()

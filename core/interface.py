@@ -1,4 +1,4 @@
-"""This file contains all main functions that are related to the UI aspect of the program"""
+"""This file contains all the functions that are related to the UI aspect of the program"""
 
 import importlib
 import os
@@ -7,119 +7,127 @@ import tkinter
 from tkinter import filedialog
 from tkinter.messagebox import askokcancel
 from InquirerPy import inquirer, get_style
+from InquirerPy.base import Choice
 from printy import printy
 from pyfiglet import Figlet
-from tkcolorpicker import askcolor
-from core.console.console import organise_console_input, call_command
-from core.functions import convert_hex, get_terminal_width
+from core.console.console import console_ui
+from core.functions import get_terminal_width, Load
 
 
-def main_menu(choices, instruction_data):
-    style = get_custom_style()
-    message = "Select Mode:"
-    mode = inquirer.select(
-        message=message,
-        choices=choices,
-        default=None,
-        style=style,
-        qmark="≻≻",
-        amark="≻≻"
-    ).execute()
-    if mode == 'console':
-        console_ui(start_mode=True)
-    elif mode == 'settings':
-        settings_ui()
-    elif mode is None:
-        print("Exiting...")
-        sys.exit(1)
-    else:
-        for i in instruction_data:
-            if mode == i:
-                module_name = ''.join(('.', instruction_data[i]['module']))
-                module = importlib.import_module(module_name, "plugins")
-                class_name = getattr(module, instruction_data[i]['class'])
-                class_instance = class_name()
-                class_instance.run = getattr(class_instance, instruction_data[i]['method'])
-                class_instance.run()
+class Interface:
+    style = None
 
+    def __init__(self):
+        self.style = self.get_custom_style()
 
-def console_ui(start_mode=False):
-    if start_mode is True:
-        printy("CommandBlade Console Version 0.3.6"
-               "\nHalim Mouaziz, Project Hephaestus.", 'o>')
-    style = get_custom_style()
-    console_input = inquirer.text(message="", style=style, qmark="≻≻", amark="≻≻").execute()
-    call_command(input_dict=organise_console_input(console_input))
-    console_ui()
-
-
-def settings_ui():
-    pass
-
-
-def get_custom_style():
-    style = get_style({"questionmark": "#ea6500",
-                       "answermark": "#e5c07b",
-                       "answer": "#ffffff",
-                       "input": "#ea6500",
-                       "question": "",
-                       "answered_question": "",
-                       "instruction": "#abb2bf",
-                       "long_instruction": "#abb2bf",
-                       "pointer": "#ea6500",
-                       "checkbox": "#f06800",
-                       "separator": "",
-                       "skipped": "#5c6370",
-                       "validator": "",
-                       "marker": "#f06800",
-                       "fuzzy_prompt": "#c678dd",
-                       "fuzzy_info": "#abb2bf",
-                       "fuzzy_border": "#ea6500",
-                       "fuzzy_match": "#c678dd",
-                       "spinner_pattern": "#e5c07b",
-                       "spinner_text": ""}, style_override=True)
-    return style
-
-
-def get_input(is_string, message):
-    style = get_custom_style()
-    data = inquirer.text(message=message, style=style, qmark="≻≻", amark="≻≻").execute()
-    if is_string is True:
-        if isinstance(data, str):
-            return data
+    @classmethod
+    def main_menu(cls, choices, instruction_data):
+        message = "Select Mode:"
+        mode = inquirer.select(
+            message=message,
+            choices=choices,
+            default=None,
+            style=cls.style,
+            qmark="≻≻",
+            amark="≻≻"
+        ).execute()
+        if mode == 'console':
+            console_ui(start_mode=True)
+        elif mode == 'settings':
+            cls.settings_ui()
+        elif mode is None:
+            print("Exiting...")
+            sys.exit(1)
         else:
-            input_string = str(data)
-            return input_string
-    else:
-        return data
+            for i in instruction_data:
+                if mode == i:
+                    module_name = ''.join(('.', instruction_data[i]['module']))
+                    module = importlib.import_module(module_name, "plugins")
+                    class_name = getattr(module, instruction_data[i]['class'])
+                    class_instance = class_name()
+                    class_instance.run = getattr(class_instance, instruction_data[i]['method'])
+                    class_instance.run()
 
+    @classmethod
+    def settings_ui(cls):
+        pass
 
-def get_filepath():
-    tkinter.Tk().withdraw()
-    filepath = filedialog.askopenfilename()
-    return filepath
+    @classmethod
+    def get_input(cls, datatype, message):
+        data = inquirer.text(message=message, style=cls.style, qmark="≻≻", amark="≻≻").execute()
+        if datatype is str:
+            if isinstance(data, str):
+                return data
+            else:
+                input_string = str(data)
+                return input_string
+        else:
+            return data
 
+    @classmethod
+    def get_custom_style(cls):
+        style = get_style({"questionmark": "#ea6500",
+                   "answermark": "#e5c07b",
+                   "answer": "#ffffff",
+                   "input": "#ea6500",
+                   "question": "",
+                   "answered_question": "",
+                   "instruction": "#abb2bf",
+                   "long_instruction": "#abb2bf",
+                   "pointer": "#ea6500",
+                   "checkbox": "#f06800",
+                   "separator": "",
+                   "skipped": "#5c6370",
+                   "validator": "",
+                   "marker": "#f06800",
+                   "fuzzy_prompt": "#c678dd",
+                   "fuzzy_info": "#abb2bf",
+                   "fuzzy_border": "#ea6500",
+                   "fuzzy_match": "#c678dd",
+                   "spinner_pattern": "#e5c07b",
+                   "spinner_text": ""}, style_override=True)
+        return style
 
-def clear_screen():
-    clear = lambda: os.system('cls')
-    clear()
+    @classmethod
+    def get_filepath(cls, mode='TK'):
+        filepath = str
+        if mode == 'TK':
+            tkinter.Tk().withdraw()
+            filepath = filedialog.askopenfilename()
+        elif mode == 'IP':
+            filepath = inquirer.text(message="Enter filepath:", style=cls.style, qmark="≻≻", amark="≻≻").execute()
+        return filepath
 
+    @classmethod
+    def clear_screen(cls):
+        clear = lambda: os.system('cls')
+        clear()
 
-def get_color_picker(color_dict):
-    old_color = color_dict['SVG']
-    hex_color = askcolor(old_color, alpha=True)[-1]
-    rgb_color, rgba_color = convert_hex(hex_color)
-    new_color = {'PNG': rgba_color, 'SVG': hex_color, 'EPS': rgb_color}
-    return new_color
+    @classmethod
+    def save_error_prompt(cls):
+        answer = askokcancel(title='Error', message='The filepath you selected was not recognised.')
+        return answer
 
+    @classmethod
+    def display_start_message(cls, message):
+        width = get_terminal_width()
+        m = Figlet(font='slant', width=width)
+        printy(m.renderText("CommandBlade"), 'o')
+        print(message.center(width))
 
-def save_error_prompt():
-    answer = askokcancel(title='Error', message='The filepath you selected was not recognised.')
-    return answer
+    @classmethod
+    def create_menu_list(cls, hooks):
+        instruction_data = {}
+        choices = [Choice(value='console', name="Console Mode", enabled=True), ]
+        end = [Choice(value='settings', name="Settings", enabled=True), Choice(value=None, name="Exit", enabled=True)]
+        for hook in hooks:
+            choices.append(Choice(value=hook['UFI'], name=hook['choice_name'], enabled=True))
+            instruction_data[hook['UFI']] = hook
+        choices.extend(end)
+        return choices, instruction_data
 
-
-def display_start_message(message):
-    width = get_terminal_width()
-    m = Figlet(font='slant', width=width)
-    printy(m.renderText("CommandBlade"), 'o')
-    print(message.center(width))
+    @classmethod
+    def get_menu_list(cls):
+        hooks = Load.get_hooks()
+        choices, instruction_data = cls.create_menu_list(hooks)
+        return choices, instruction_data

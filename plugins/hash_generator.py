@@ -1,8 +1,7 @@
 import hashlib
 from InquirerPy import inquirer
 from InquirerPy.base import Choice
-from core.interface import main_menu, get_custom_style, get_input, get_filepath
-from core.functions import get_menu_list
+from core.interface import Interface
 
 
 class Plugin:
@@ -22,7 +21,7 @@ class Plugin:
 
 
 class HashGenerator:
-    style = get_custom_style()
+    style = Interface.get_custom_style()
 
     @classmethod
     def hash_generator_ui(cls):
@@ -42,12 +41,12 @@ class HashGenerator:
         ).execute()
         if select == 1:
             hash_algorithm = cls.hash_algorithm_selector_ui()
-            string_input = get_input(is_string=True, message="Enter string.")
+            string_input = Interface.get_input(datatype=str, message="Enter string.")
             print(hash_string(hash_algorithm, string_input))
             cls.hash_generator_ui()
         elif select == 2:
             hash_algorithm = cls.hash_algorithm_selector_ui()
-            filepath = get_filepath()
+            filepath = Interface.get_filepath()
             print(filepath)
             hashed_file = hash_file(hash_algorithm, filepath)
             print(hashed_file.hexdigest())
@@ -55,8 +54,8 @@ class HashGenerator:
         elif select == 3:
             cls.hash_generator_settings_ui()
         elif select is None:
-            choices, instruction_data = get_menu_list()
-            main_menu(choices, instruction_data)
+            choices, instruction_data = Interface.get_menu_list()
+            Interface.main_menu(choices, instruction_data)
 
     @classmethod
     def hash_generator_settings_ui(cls):

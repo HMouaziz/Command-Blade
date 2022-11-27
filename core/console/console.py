@@ -1,6 +1,7 @@
 """This file contains the console's engine"""
 
 import re
+from InquirerPy import inquirer
 from printy import printy
 from core.console.utils import get_command_list
 from core.functions import get_terminal_width
@@ -85,3 +86,14 @@ def executor(command_name, input_dict):
         class_instance.execute_command = getattr(class_instance,
                                                  class_instance.argument_dict['arguments'][input_dict['argument']])
         class_instance.execute_command()
+
+
+def console_ui(start_mode=False):
+    from core.interface import Interface
+    if start_mode is True:
+        printy("CommandBlade Console Version 0.3.6"
+               "\nHalim Mouaziz, Project Hephaestus.", 'o>')
+    style = Interface.get_custom_style()
+    console_input = inquirer.text(message="", style=style, qmark="≻≻", amark="≻≻").execute()
+    call_command(input_dict=organise_console_input(console_input))
+    console_ui()

@@ -7,8 +7,10 @@ from tkinter import filedialog
 from InquirerPy import inquirer
 from InquirerPy.base import Choice
 from printy import printy
-from core.interface import main_menu, get_custom_style, clear_screen, get_color_picker, save_error_prompt
-from core.functions import get_settings, get_terminal_width, get_filetype, update_settings, get_menu_list
+from tkcolorpicker import askcolor
+
+from core.interface import Interface
+from core.functions import Settings, FileUtil, get_terminal_width
 
 
 class Plugin:
@@ -31,11 +33,11 @@ class QRCodeGenerator:
     style = None
 
     def __init__(self):
-        self.style = get_custom_style()
+        self.style = Interface.get_custom_style()
 
     @classmethod
     def qr_code_generator_ui(cls):
-        settings = get_settings()
+        settings = Settings.get()
         select = inquirer.select(
             message='',
             choices=[
@@ -66,8 +68,8 @@ class QRCodeGenerator:
         elif select == 2:
             cls.qr_code_generator_settings_ui(settings)
         elif select is None:
-            choices, instruction_data = get_menu_list()
-            main_menu(choices, instruction_data)
+            choices, instruction_data = Interface.get_menu_list()
+            Interface.main_menu(choices, instruction_data)
 
     @classmethod
     def qr_code_generator_settings_ui(cls, settings):
@@ -91,8 +93,8 @@ class QRCodeGenerator:
         if select == 1:
             adv = settings['qr_s_advanced_mode']
             settings['qr_s_advanced_mode'] = not adv
-            update_settings(settings)
-            updated_settings = get_settings()
+            Settings.update(settings)
+            updated_settings = Settings.get()
             cls.qr_code_generator_settings_ui(updated_settings)
         elif select == 2:
             cls.qr_code_encoding_settings_ui(settings)
@@ -132,15 +134,15 @@ class QRCodeGenerator:
                 default=1
             ).execute()
             settings['qr_e_error_correction_level'] = c_level
-            update_settings(settings)
-            updated_settings = get_settings()
+            Settings.update(settings)
+            updated_settings = Settings.get()
             cls.qr_code_encoding_settings_ui(updated_settings)
         elif select == 2:
             version = int(inquirer.number(message="Enter Version Size:", max_allowed=40, min_allowed=1, style=cls.style,
                                           qmark="≻≻", amark="≻≻").execute())
             settings['qr_e_version'] = version
-            update_settings(settings)
-            updated_settings = get_settings()
+            Settings.update(settings)
+            updated_settings = Settings.get()
             cls.qr_code_encoding_settings_ui(updated_settings)
         elif select == 3:
             e_mode = inquirer.select(
@@ -157,8 +159,8 @@ class QRCodeGenerator:
                 default=1
             ).execute()
             settings['qr_e_encoding_mode'] = e_mode
-            update_settings(settings)
-            updated_settings = get_settings()
+            Settings.update(settings)
+            updated_settings = Settings.get()
             cls.qr_code_encoding_settings_ui(updated_settings)
         elif select == 4:
             printy(f'Correction level:\n'
@@ -174,7 +176,7 @@ class QRCodeGenerator:
             back = inquirer.select(message='', choices=[Choice(value=None, name="Back")], style=cls.style, qmark="≻≻",
                                    amark="≻≻", default=None).execute()
             if back is None:
-                clear_screen()
+                Interface.clear_screen()
                 cls.qr_code_encoding_settings_ui(settings)
         elif select is None:
             cls.qr_code_generator_settings_ui(settings)
@@ -197,30 +199,30 @@ class QRCodeGenerator:
             default=None
         ).execute()
         if select == 1:
-            n_color = get_color_picker(settings['qr_r_module_color'])
+            n_color = Interface.get_color_picker(settings['qr_r_module_color'])
             settings['qr_r_module_color'] = n_color
-            update_settings(settings)
-            updated_settings = get_settings()
+            Settings.update(settings)
+            updated_settings = Settings.get()
             cls.qr_code_rendering_settings_ui(updated_settings)
         elif select == 2:
-            b_color = get_color_picker(settings['qr_r_background_color'])
+            b_color = Interface.get_color_picker(settings['qr_r_background_color'])
             settings['qr_r_background_color'] = b_color
-            update_settings(settings)
-            updated_settings = get_settings()
+            Settings.update(settings)
+            updated_settings = Settings.get()
             cls.qr_code_rendering_settings_ui(updated_settings)
         elif select == 3:
             scale = int(inquirer.number(message="Enter Scale:", min_allowed=1, style=cls.style, qmark="≻≻",
                                         amark="≻≻").execute())
             settings['qr_r_scale'] = scale
-            update_settings(settings)
-            updated_settings = get_settings()
+            Settings.update(settings)
+            updated_settings = Settings.get()
             cls.qr_code_rendering_settings_ui(updated_settings)
         elif select == 4:
             q_zone = int(inquirer.number(message="Enter Quiet Zone Size:", min_allowed=1, style=cls.style, qmark="≻≻",
                                          amark="≻≻").execute())
             settings['qr_r_quiet_zone'] = q_zone
-            update_settings(settings)
-            updated_settings = get_settings()
+            Settings.update(settings)
+            updated_settings = Settings.get()
             cls.qr_code_rendering_settings_ui(updated_settings)
         elif select == 5:
             printy(f'QR Color:\n'
@@ -238,7 +240,7 @@ class QRCodeGenerator:
             back = inquirer.select(message='', choices=[Choice(value=None, name="Back")], style=cls.style, qmark="≻≻",
                                    amark="≻≻", default=None).execute()
             if back is None:
-                clear_screen()
+                Interface.clear_screen()
                 cls.qr_code_rendering_settings_ui(settings)
         elif select is None:
             cls.qr_code_generator_settings_ui(settings)
@@ -287,12 +289,12 @@ def save_qr_render(data, render_settings, advanced_mode):
     except FileNotFoundError:
         if filepath != '':
             printy('Filepath not recognized!'.center(get_terminal_width()), '<r')
-            retry = save_error_prompt()
+            retry = Interface.save_error_prompt()
             if retry:
                 save_qr_render(data, render_settings, advanced_mode)
         else:
             QRCodeGenerator.qr_code_generator_ui()
-    extension = get_filetype(filepath)[1]
+    extension = FileUtil.get_filetype(filepath)[1]
     if extension == '.txt':
         with open(filepath, 'w') as f:
             f.write(data.text())
@@ -333,3 +335,19 @@ def save_qr_render(data, render_settings, advanced_mode):
         data.png(buffer)
         check = True
     return check, filepath
+
+
+def convert_hex(hex_color):
+    hexi = hex_color[1:]
+    rgb_color = tuple(int(hexi[i:i+2], 16) for i in (0, 2, 4))
+    rgba_color = list([int(hexi[x:x+2], 16)for x in (0, 2, 4)])
+    rgba_color.append(int("{:0.0f}".format([int(hexi[6:], 16)/255][0] * 255)))
+    return rgb_color, rgba_color
+
+
+def get_color_picker(color_dict):
+    old_color = color_dict['SVG']
+    hex_color = askcolor(old_color, alpha=True)[-1]
+    rgb_color, rgba_color = convert_hex(hex_color)
+    new_color = {'PNG': rgba_color, 'SVG': hex_color, 'EPS': rgb_color}
+    return new_color

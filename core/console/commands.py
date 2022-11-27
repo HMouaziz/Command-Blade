@@ -6,10 +6,10 @@ import sys
 import pyqrcode as pyqrcode
 import pytz
 from printy import printy
-from core.console.console import executor
+from core.console.console import executor, console_ui
 from plugins.hash_generator import hash_string, hash_file
-from core.interface import console_ui, get_filepath
 from core.functions import get_terminal_width
+from core.interface import Interface
 from core.console.utils import get_datetime_list, get_aware_datetime, print_all_recognised_tz
 
 
@@ -114,8 +114,9 @@ class Exit(Command):
 
     @classmethod
     def main_menu(cls):
-        from core.interface import main_menu
-        main_menu()
+        from core.interface import Interface
+        choices, instruction_data = Interface.get_menu_list()
+        Interface.main_menu(choices, instruction_data)
 
 
 class Hash(Command):
@@ -177,7 +178,7 @@ class Hash(Command):
                 hashed_file = hash_file(algorithm, i.replace('"', ''))
                 printy(hashed_file.hexdigest(), 'y')
         elif input_dict['modifiers'][0] == '-ui':
-            path = get_filepath()
+            path = Interface.get_filepath()
             hashed_file = hash_file(algorithm, path)
             printy(hashed_file.hexdigest(), 'y')
         else:
