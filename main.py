@@ -1,10 +1,13 @@
-from core.qr_code_generator import operations
 from core.core import CommandBlade
+from core.utils import get_plugins
 from core.console import console
 
 if __name__ == '__main__':
-    #console.debugger()
-    #operations.debugger()
-    app = CommandBlade()
-    app.run()
+    debugger_mode = False
+    if debugger_mode is True:
+        console.debugger()
+    else:
+        plugins = get_plugins()
+        app = CommandBlade(plugins)
+        app.run()
 

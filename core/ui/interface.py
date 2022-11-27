@@ -1,64 +1,43 @@
-import os
+import importlib
 import sys
 from InquirerPy import inquirer
 from InquirerPy.base.control import Choice
 from InquirerPy.validator import EmptyInputValidator
-from pyfiglet import Figlet
 from printy import printy
-from .utils import get_custom_style, get_input, get_filepath, get_settings, update_settings, clear_screen, \
-    get_color_picker
+from .utils import get_custom_style, get_input, get_filepath
+from ..utils import get_settings, update_settings
 from ..console.console import organise_console_input, call_command
 from ..hash_checker.operations import hash_string, hash_file
 from ..password_generator.operations import generate_password
-from ..qr_code_generator.operations import generate_qr_code
-from ..utils import get_terminal_width
 
 
-def start():
-    width = get_terminal_width()
-    m = Figlet(font='slant', width=width)
-    printy(m.renderText("CommandBlade"), 'o')
-    print("[  CommandBlade v0.0.3, Halim Mouaziz  ]".center(width))
-    main_menu()
-
-
-def main_menu():
+def main_menu(choices, instruction_data):
     style = get_custom_style()
     message = "Select Mode:"
     mode = inquirer.select(
         message=message,
-        choices=[
-            Choice(value=1, name="Console Mode"),
-            Choice(value=2, name="Search Engine Mode"),
-            Choice(value=3, name="Network Tools Mode"),
-            Choice(value=4, name="Hash Checker"),
-            Choice(value=5, name="Password Generator"),
-            Choice(value=6, name="QR Code Generator"),
-            Choice(value=7, name="Settings"),
-            Choice(value=None, name="Exit"),
-        ],
+        choices=choices,
         default=None,
         style=style,
         qmark="≻≻",
         amark="≻≻"
     ).execute()
-    if mode == 1:
+    if mode == 'console':
         console_ui(start_mode=True)
-    elif mode == 2:
-        search_engine_ui()
-    elif mode == 3:
-        network_tools_ui()
-    elif mode == 4:
-        hash_checker_ui()
-    elif mode == 5:
-        password_generator_ui()
-    elif mode == 6:
-        qr_code_generator_ui()
-    elif mode == 7:
+    elif mode == 'settings':
         settings_ui()
     elif mode is None:
         print("Exiting...")
         sys.exit(1)
+    else:
+        for i in instruction_data:
+            if mode == i:
+                module_name = ''.join(('.', instruction_data[i]['module']))
+                module = importlib.import_module(module_name, "plugins")
+                class_name = getattr(module, instruction_data[i]['class'])
+                class_instance = class_name()
+                class_instance.run = getattr(class_instance, instruction_data[i]['method'])
+                class_instance.run()
 
 
 def console_ui(start_mode=False):
@@ -69,14 +48,6 @@ def console_ui(start_mode=False):
     console_input = inquirer.text(message="", style=style, qmark="≻≻", amark="≻≻").execute()
     call_command(input_dict=organise_console_input(console_input))
     console_ui()
-
-
-def search_engine_ui():
-    pass
-
-
-def network_tools_ui():
-    pass
 
 
 def hash_checker_ui():
@@ -110,7 +81,7 @@ def hash_checker_ui():
     elif select == 3:
         hash_checker_settings_ui()
     elif select is None:
-        main_menu()
+        main_menu('a')
 
 
 def hash_checker_settings_ui():
@@ -177,7 +148,7 @@ def password_generator_ui():
     elif select == 2:
         password_generator_settings_ui()
     elif select is None:
-        main_menu()
+        main_menu('a')
 
 
 def password_generator_settings_ui():
@@ -244,218 +215,6 @@ def password_generator_settings_ui():
         password_generator_ui()
     password_generator_settings_ui()
 
-
-def qr_code_generator_ui():
-    settings = get_settings()
-    style = get_custom_style()
-    select = inquirer.select(
-        message='',
-        choices=[
-            Choice(value=1, name="Create QR Code"),
-            Choice(value=2, name="Settings"),
-            Choice(value=None, name="Exit")
-        ],
-        style=style,
-        qmark="≻≻",
-        amark="≻≻",
-        default=None
-    ).execute()
-    if select == 1:
-        data = inquirer.text(message='Enter data:', style=style, qmark="≻≻", amark="≻≻",).execute()
-        request = {'data': data,
-                   'advanced_mode': settings['qr_s_advanced_mode'],
-                   'encode_settings': {"error_correction_level": settings['qr_e_error_correction_level'],
-                                       "version": settings['qr_e_version'],
-                                       "encoding_mode": settings['qr_e_encoding_mode'],
-                                       },
-                   'render_settings': {"quiet_zone": settings['qr_r_quiet_zone'],
-                                       "module_color": settings['qr_r_module_color'],
-                                       "background_color": settings['qr_r_background_color'],
-                                       "scale": settings['qr_r_scale']}
-                   }
-        generate_qr_code(request)
-        qr_code_generator_ui()
-    elif select == 2:
-        qr_code_generator_settings_ui(settings)
-    elif select is None:
-        main_menu()
-
-
-def qr_code_generator_settings_ui(settings):
-    if settings['qr_s_advanced_mode'] is True:
-        advanced_setting = "Disable Advanced Mode"
-    else:
-        advanced_setting = "Enable Advanced Mode"
-    style = get_custom_style()
-    select = inquirer.select(
-        message='',
-        choices=[
-            Choice(value=1, name=advanced_setting),
-            Choice(value=2, name="Encoding Settings"),
-            Choice(value=3, name="Rendering Settings"),
-            Choice(value=None, name="Exit")
-        ],
-        style=style,
-        qmark="≻≻",
-        amark="≻≻",
-        default=None
-    ).execute()
-    if select == 1:
-        adv = settings['qr_s_advanced_mode']
-        settings['qr_s_advanced_mode'] = not adv
-        update_settings(settings)
-        updated_settings = get_settings()
-        qr_code_generator_settings_ui(updated_settings)
-    elif select == 2:
-        qr_code_encoding_settings_ui(settings)
-    elif select == 3:
-        qr_code_rendering_settings_ui(settings)
-    elif select is None:
-        qr_code_generator_ui()
-
-
-def qr_code_encoding_settings_ui(settings):
-    style = get_custom_style()
-    select = inquirer.select(
-        message='',
-        choices=[
-            Choice(value=1, name=f"Change Correction Level from [{settings['qr_e_error_correction_level']}]"),
-            Choice(value=2, name=f"Change Version Size from [{settings['qr_e_version']}]"),
-            Choice(value=3, name=f"Change Encoding Mode from [{settings['qr_e_encoding_mode']}]"),
-            Choice(value=4, name="Settings Information"),
-            Choice(value=None, name="Exit")
-        ],
-        style=style,
-        qmark="≻≻",
-        amark="≻≻",
-        default=None
-    ).execute()
-    if select == 1:
-        c_level = inquirer.select(
-            message='Select correction level:',
-            choices=[
-                Choice(value='H', name="H (Default)"),
-                Choice(value='Q', name="Q"),
-                Choice(value='M', name="M"),
-                Choice(value='L', name="L")
-            ],
-            style=style,
-            qmark="≻≻",
-            amark="≻≻",
-            default=1
-        ).execute()
-        settings['qr_e_error_correction_level'] = c_level
-        update_settings(settings)
-        updated_settings = get_settings()
-        qr_code_encoding_settings_ui(updated_settings)
-    elif select == 2:
-        version = int(inquirer.number(message="Enter Version Size:", max_allowed=40, min_allowed=1, style=style,
-                                      qmark="≻≻", amark="≻≻").execute())
-        settings['qr_e_version'] = version
-        update_settings(settings)
-        updated_settings = get_settings()
-        qr_code_encoding_settings_ui(updated_settings)
-    elif select == 3:
-        e_mode = inquirer.select(
-            message='Select encoding mode:',
-            choices=[
-                Choice(value='numeric', name="Numeric"),
-                Choice(value='alphanumeric', name="Alphanumeric"),
-                Choice(value='kanji', name="Kanji"),
-                Choice(value='binary', name="Binary")
-            ],
-            style=style,
-            qmark="≻≻",
-            amark="≻≻",
-            default=1
-        ).execute()
-        settings['qr_e_encoding_mode'] = e_mode
-        update_settings(settings)
-        updated_settings = get_settings()
-        qr_code_encoding_settings_ui(updated_settings)
-    elif select == 4:
-        printy(f'Correction level:\n'
-               f'Sets the error correction level of the code. Each level has an associated name given by a letter: '
-               f'L, M, Q, or H; each level can correct up to 7, 15, 25, or 30 percent of the data respectively.\n'
-               f'Version size:\n'
-               f'Specifies the size and data capacity of the code. Versions are any integer between 1 and 40. '
-               f'Where version 1 is the smallest QR code, and version 40 is the largest. By default, the object uses '
-               f'the data’s encoding and error correction level to calculate the smallest possible version.\n'
-               f'Encoding mode:\n'
-               f'Sets how the contents will be encoded. By default, the most efficient encoding is used for the '
-               f'contents.\n', 'g')
-        back = inquirer.select(message='', choices=[Choice(value=None, name="Back")], style=style, qmark="≻≻",
-                               amark="≻≻", default=None).execute()
-        if back is None:
-            clear_screen()
-            qr_code_encoding_settings_ui(settings)
-    elif select is None:
-        qr_code_generator_settings_ui(settings)
-
-
-def qr_code_rendering_settings_ui(settings):
-    style = get_custom_style()
-    select = inquirer.select(
-        message='',
-        choices=[
-            Choice(value=1, name=f"Change QR Color from [{settings['qr_r_module_color']}]"),
-            Choice(value=2, name=f"Change Background Color from[{settings['qr_r_background_color']}]"),
-            Choice(value=3, name=f"Change Scale from [{settings['qr_r_scale']}]"),
-            Choice(value=4, name=f"Change Quiet Zone from [{settings['qr_r_quiet_zone']}]"),
-            Choice(value=5, name="Settings Information"),
-            Choice(value=None, name="Exit")
-        ],
-        style=style,
-        qmark="≻≻",
-        amark="≻≻",
-        default=None
-    ).execute()
-    if select == 1:
-        n_color = get_color_picker(settings['qr_r_module_color'])
-        settings['qr_r_module_color'] = n_color
-        update_settings(settings)
-        updated_settings = get_settings()
-        qr_code_rendering_settings_ui(updated_settings)
-    elif select == 2:
-        b_color = get_color_picker(settings['qr_r_background_color'])
-        settings['qr_r_background_color'] = b_color
-        update_settings(settings)
-        updated_settings = get_settings()
-        qr_code_rendering_settings_ui(updated_settings)
-    elif select == 3:
-        scale = int(inquirer.number(message="Enter Scale:", min_allowed=1, style=style, qmark="≻≻",
-                                    amark="≻≻").execute())
-        settings['qr_r_scale'] = scale
-        update_settings(settings)
-        updated_settings = get_settings()
-        qr_code_rendering_settings_ui(updated_settings)
-    elif select == 4:
-        q_zone = int(inquirer.number(message="Enter Quiet Zone Size:", min_allowed=1, style=style, qmark="≻≻",
-                                     amark="≻≻").execute())
-        settings['qr_r_quiet_zone'] = q_zone
-        update_settings(settings)
-        updated_settings = get_settings()
-        qr_code_rendering_settings_ui(updated_settings)
-    elif select == 5:
-        printy(f'QR Color:\n'
-               f'The color of the QR modules.\n'
-               f'Background Color:\n'
-               f'The color of the background of the QR code.\n'
-               f'Scale:\n'
-               f'The size of a single data module in pixels. Setting this parameter to one, will result in each data '
-               f'module taking up 1 pixel. In other words, the QR code would be too small to scan. What scale to use '
-               f'depends on how you plan to use the QR code. Generally, three, four, or five will result in small but'
-               f' scanable QR codes.\n'
-               f'Quiet Zone:\n'
-               f'An empty area around the QR code. The area is the background module in color. '
-               f'According to the standard this area should be four modules wide.', 'g')
-        back = inquirer.select(message='', choices=[Choice(value=None, name="Back")], style=style, qmark="≻≻",
-                               amark="≻≻", default=None).execute()
-        if back is None:
-            clear_screen()
-            qr_code_rendering_settings_ui(settings)
-    elif select is None:
-        qr_code_generator_settings_ui(settings)
 
 
 def settings_ui():

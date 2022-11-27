@@ -4,7 +4,7 @@
     "use_capitals": true,
     "use_digits": true,
     "use_symbols": false,
-    "qr_s_advanced_mode": true,
+    "qr_s_advanced_mode": false,
     "qr_e_error_correction_level": "H",
     "qr_e_version": 5,
     "qr_e_encoding_mode": "binary",
