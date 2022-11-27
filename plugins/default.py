@@ -13,5 +13,5 @@ class Plugin:
     def process(self):
         hooks = get_hooks()
         create_menu_list(hooks)
-        display_start_message("[  CommandBlade v0.1.4, Halim Mouaziz  ]")
+        display_start_message("[  CommandBlade v0.1.5, Halim Mouaziz  ]")
         main_menu(self.choices, self.instruction_data)

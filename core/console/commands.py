@@ -5,7 +5,7 @@ import pyqrcode as pyqrcode
 import pytz
 from printy import printy
 from core.console.console import executor
-from core.hash_checker.operations import hash_string, hash_file
+from plugins.hash_generator import hash_string, hash_file
 from core.ui.interface import console_ui
 from core.ui.utils import get_filepath
 from core.utils import get_terminal_width
