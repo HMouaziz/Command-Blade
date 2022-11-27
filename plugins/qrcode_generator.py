@@ -37,7 +37,6 @@ class QRCodeGenerator:
     @classmethod
     def qr_code_generator_ui(cls):
         settings = get_settings()
-        style = cls.style
         select = inquirer.select(
             message='',
             choices=[
@@ -45,13 +44,13 @@ class QRCodeGenerator:
                 Choice(value=2, name="Settings"),
                 Choice(value=None, name="Exit")
             ],
-            style=style,
+            style=cls.style,
             qmark="≻≻",
             amark="≻≻",
             default=None
         ).execute()
         if select == 1:
-            data = inquirer.text(message='Enter data:', style=style, qmark="≻≻", amark="≻≻",).execute()
+            data = inquirer.text(message='Enter data:', style=cls.style, qmark="≻≻", amark="≻≻",).execute()
             request = {'data': data,
                        'advanced_mode': settings['qr_s_advanced_mode'],
                        'encode_settings': {"error_correction_level": settings['qr_e_error_correction_level'],
@@ -69,7 +68,6 @@ class QRCodeGenerator:
             cls.qr_code_generator_settings_ui(settings)
         elif select is None:
             choices, instruction_data = get_menu_list()
-            print(choices)
             main_menu(choices, instruction_data)
 
     @classmethod
@@ -78,7 +76,6 @@ class QRCodeGenerator:
             advanced_setting = "Disable Advanced Mode"
         else:
             advanced_setting = "Enable Advanced Mode"
-        style = cls.style
         select = inquirer.select(
             message='',
             choices=[
@@ -87,7 +84,7 @@ class QRCodeGenerator:
                 Choice(value=3, name="Rendering Settings"),
                 Choice(value=None, name="Exit")
             ],
-            style=style,
+            style=cls.style,
             qmark="≻≻",
             amark="≻≻",
             default=None
@@ -107,7 +104,6 @@ class QRCodeGenerator:
 
     @classmethod
     def qr_code_encoding_settings_ui(cls, settings):
-        style = cls.style
         select = inquirer.select(
             message='',
             choices=[
@@ -117,7 +113,7 @@ class QRCodeGenerator:
                 Choice(value=4, name="Settings Information"),
                 Choice(value=None, name="Exit")
             ],
-            style=style,
+            style=cls.style,
             qmark="≻≻",
             amark="≻≻",
             default=None
@@ -131,7 +127,7 @@ class QRCodeGenerator:
                     Choice(value='M', name="M"),
                     Choice(value='L', name="L")
                 ],
-                style=style,
+                style=cls.style,
                 qmark="≻≻",
                 amark="≻≻",
                 default=1
@@ -141,7 +137,7 @@ class QRCodeGenerator:
             updated_settings = get_settings()
             cls.qr_code_encoding_settings_ui(updated_settings)
         elif select == 2:
-            version = int(inquirer.number(message="Enter Version Size:", max_allowed=40, min_allowed=1, style=style,
+            version = int(inquirer.number(message="Enter Version Size:", max_allowed=40, min_allowed=1, style=cls.style,
                                           qmark="≻≻", amark="≻≻").execute())
             settings['qr_e_version'] = version
             update_settings(settings)
@@ -156,7 +152,7 @@ class QRCodeGenerator:
                     Choice(value='kanji', name="Kanji"),
                     Choice(value='binary', name="Binary")
                 ],
-                style=style,
+                style=cls.style,
                 qmark="≻≻",
                 amark="≻≻",
                 default=1
@@ -176,7 +172,7 @@ class QRCodeGenerator:
                    f'Encoding mode:\n'
                    f'Sets how the contents will be encoded. By default, the most efficient encoding is used for the '
                    f'contents.\n', 'g')
-            back = inquirer.select(message='', choices=[Choice(value=None, name="Back")], style=style, qmark="≻≻",
+            back = inquirer.select(message='', choices=[Choice(value=None, name="Back")], style=cls.style, qmark="≻≻",
                                    amark="≻≻", default=None).execute()
             if back is None:
                 clear_screen()
@@ -186,7 +182,6 @@ class QRCodeGenerator:
 
     @classmethod
     def qr_code_rendering_settings_ui(cls, settings):
-        style = cls.style
         select = inquirer.select(
             message='',
             choices=[
@@ -197,7 +192,7 @@ class QRCodeGenerator:
                 Choice(value=5, name="Settings Information"),
                 Choice(value=None, name="Exit")
             ],
-            style=style,
+            style=cls.style,
             qmark="≻≻",
             amark="≻≻",
             default=None
@@ -215,14 +210,14 @@ class QRCodeGenerator:
             updated_settings = get_settings()
             cls.qr_code_rendering_settings_ui(updated_settings)
         elif select == 3:
-            scale = int(inquirer.number(message="Enter Scale:", min_allowed=1, style=style, qmark="≻≻",
+            scale = int(inquirer.number(message="Enter Scale:", min_allowed=1, style=cls.style, qmark="≻≻",
                                         amark="≻≻").execute())
             settings['qr_r_scale'] = scale
             update_settings(settings)
             updated_settings = get_settings()
             cls.qr_code_rendering_settings_ui(updated_settings)
         elif select == 4:
-            q_zone = int(inquirer.number(message="Enter Quiet Zone Size:", min_allowed=1, style=style, qmark="≻≻",
+            q_zone = int(inquirer.number(message="Enter Quiet Zone Size:", min_allowed=1, style=cls.style, qmark="≻≻",
                                          amark="≻≻").execute())
             settings['qr_r_quiet_zone'] = q_zone
             update_settings(settings)
@@ -241,7 +236,7 @@ class QRCodeGenerator:
                    f'Quiet Zone:\n'
                    f'An empty area around the QR code. The area is the background module in color. '
                    f'According to the standard this area should be four modules wide.', 'g')
-            back = inquirer.select(message='', choices=[Choice(value=None, name="Back")], style=style, qmark="≻≻",
+            back = inquirer.select(message='', choices=[Choice(value=None, name="Back")], style=cls.style, qmark="≻≻",
                                    amark="≻≻", default=None).execute()
             if back is None:
                 clear_screen()
