@@ -10,7 +10,7 @@ from printy import printy
 from tkcolorpicker import askcolor
 
 from core.interface import Interface
-from core.functions import Settings, FileUtil, get_terminal_width
+from core.functions import Settings, FileUtil, Utils
 
 
 class Plugin:
@@ -30,10 +30,7 @@ class Plugin:
 
 
 class QRCodeGenerator:
-    style = None
-
-    def __init__(self):
-        self.style = Interface.get_custom_style()
+    style = Interface.get_custom_style()
 
     @classmethod
     def qr_code_generator_ui(cls):
@@ -288,7 +285,7 @@ def save_qr_render(data, render_settings, advanced_mode):
                                                 confirmoverwrite=True)
     except FileNotFoundError:
         if filepath != '':
-            printy('Filepath not recognized!'.center(get_terminal_width()), '<r')
+            printy('Filepath not recognized!'.center(Utils.get_terminal_width()), '<r')
             retry = Interface.save_error_prompt()
             if retry:
                 save_qr_render(data, render_settings, advanced_mode)

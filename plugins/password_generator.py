@@ -25,10 +25,7 @@ class Plugin:
 
 
 class PasswordGenerator:
-    style = None
-
-    def __init__(self):
-        self.style = Interface.get_custom_style()
+    style = Interface.get_custom_style()
 
     @classmethod
     def password_generator_ui(cls):
@@ -63,7 +60,7 @@ class PasswordGenerator:
     @classmethod
     def password_generator_settings_ui(cls):
         message = ""
-        settings = get_settings()
+        settings = Settings.get()
         select = inquirer.select(
             message=message,
             choices=[

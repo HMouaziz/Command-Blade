@@ -6,6 +6,8 @@ import os
 from os import listdir
 from os.path import isfile, join
 
+import filetype as filetype
+
 
 class Load:
     @classmethod
@@ -53,13 +55,34 @@ class Settings:
 class FileUtil:
     @classmethod
     def get_filetype(cls, filepath):
-        filename, filetype = os.path.splitext(filepath)
-        split_path = (filename, filetype)
+        filename, file_type = os.path.splitext(filepath)
+        split_path = (filename, file_type)
         return split_path
 
+    @classmethod
+    def get_magic_filetype(cls, filepath):
+        file_type = filetype.guess(filepath)
+        if file_type is None:
+            return None
+        else:
+            return file_type.extension
 
-def get_terminal_width():
-    try:
-        return os.get_terminal_size().columns
-    except OSError:
-        return 80
+
+class Utils:
+
+    @staticmethod
+    def check_instance(name: str, instance, value):
+        if not isinstance(value, instance):
+            raise TypeError(f"{name} must be {instance}.")
+
+    @staticmethod
+    def chunked(size, source):
+        for i in range(0, len(source), size):
+            yield source[i:i + size]
+
+    @classmethod
+    def get_terminal_width(cls):
+        try:
+            return os.get_terminal_size().columns
+        except OSError:
+            return 80

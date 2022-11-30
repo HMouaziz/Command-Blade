@@ -8,7 +8,7 @@ import pytz
 from printy import printy
 from core.console.console import executor, console_ui
 from plugins.hash_generator import hash_string, hash_file
-from core.functions import get_terminal_width
+from core.functions import Utils
 from core.interface import Interface
 from core.console.utils import get_datetime_list, get_aware_datetime, print_all_recognised_tz
 
@@ -183,7 +183,7 @@ class Hash(Command):
             printy(hashed_file.hexdigest(), 'y')
         else:
             printy(f'Error: Unrecognized or incomplete command line.'
-                   f''.center(get_terminal_width()), '<r')
+                   f''.center(Utils.get_terminal_width()), '<r')
 
 
 class Makeqr(Command):
@@ -285,15 +285,15 @@ class Time(Command):
     @classmethod
     def timezone(cls, input_dict):
         if len(input_dict['data']) == 0:
-            printy('Timezone must be specified.'.center(get_terminal_width()), '<r')
+            printy('Timezone must be specified.'.center(Utils.get_terminal_width()), '<r')
         elif input_dict['data'][0] in pytz.all_timezones:
             aware_datetime = get_aware_datetime(input_dict['data'][0])
             printy(f'It is {aware_datetime.strftime("%I:%M:%S %Z on %A the %d of %B %G")}', 'y')
         else:
-            printy('Timezone not recognised'.center(get_terminal_width()), '<r')
-            printy('Timezone is case sensitive!'.center(get_terminal_width()), '<r')
+            printy('Timezone not recognised'.center(Utils.get_terminal_width()), '<r')
+            printy('Timezone is case sensitive!'.center(Utils.get_terminal_width()), '<r')
             printy('You can obtain a list of recognised timezones by using the "-ptz" argument'
-                   .center(get_terminal_width()), '<r')
+                   .center(Utils.get_terminal_width()), '<r')
 
     @classmethod
     def print_tz(cls):

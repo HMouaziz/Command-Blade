@@ -4,7 +4,7 @@ import re
 from InquirerPy import inquirer
 from printy import printy
 from core.console.utils import get_command_list
-from core.functions import get_terminal_width
+from core.functions import Utils
 
 
 def debugger():
@@ -57,9 +57,9 @@ def call_command(input_dict):
             pass
         else:
             raise printy(f'{input_dict["command"]} is not a recognized command.'
-                         f''.center(get_terminal_width()) +
+                         f''.center(Utils.get_terminal_width()) +
                          f'\n You can use the "help" command if you need a list of available commands.'
-                         f''.center(get_terminal_width()), '<r')
+                         f''.center(Utils.get_terminal_width()), '<r')
     except TypeError:
         pass
 
@@ -74,7 +74,7 @@ def executor(command_name, input_dict):
             or len(input_dict['modifiers']) > \
             class_instance.argument_behavior_dict[input_dict['argument']]['modifier_amount'] \
             or len(input_dict['data']) > class_instance.argument_behavior_dict[input_dict['argument']]['data_amount']:
-        printy(class_instance.messages['argument_error'].center(get_terminal_width()), '<r')
+        printy(class_instance.messages['argument_error'].center(Utils.get_terminal_width()), '<r')
     elif '-h' == input_dict['argument']:
         printy(class_instance.messages['help_message'], 'n')
     elif class_instance.argument_behavior_dict[input_dict['argument']]['modifier_amount'] > 0 \
