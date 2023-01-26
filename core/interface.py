@@ -163,4 +163,3 @@ class Interface:
             print_progress_bar(i + 1)
         # Print New Line on Complete
         print()
-

@@ -228,7 +228,12 @@ class Help(Command):
 
     @classmethod
     def help(cls, args):
-        printy('help message', 'n')
+        printy('Existing Commands: '
+               ' - exit - Exit back to menu.'
+               ' - time - Displays Time.'
+               ' - calc - Calculate string expression.'
+               ' - cls  - Clear Screen.'
+               'Use "-h" argument after command for command specific help.', 'n')
 
 
 class Ping(Command):

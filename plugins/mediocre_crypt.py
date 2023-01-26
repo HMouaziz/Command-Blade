@@ -1,12 +1,9 @@
 import hashlib
 import os.path
-import time
-
 from InquirerPy import inquirer
 from InquirerPy.base import Choice
 from alive_progress import alive_bar
-
-from core.functions import Settings, FileUtil, Utils
+from core.functions import Settings, FileUtil
 from core.interface import Interface
 
 

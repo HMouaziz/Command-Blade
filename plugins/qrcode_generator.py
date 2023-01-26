@@ -8,7 +8,6 @@ from InquirerPy import inquirer
 from InquirerPy.base import Choice
 from printy import printy
 from tkcolorpicker import askcolor
-
 from core.interface import Interface
 from core.functions import Settings, FileUtil, Utils
 
@@ -196,13 +195,13 @@ class QRCodeGenerator:
             default=None
         ).execute()
         if select == 1:
-            n_color = Interface.get_color_picker(settings['qr_r_module_color'])
+            n_color = get_color_picker(settings['qr_r_module_color'])
             settings['qr_r_module_color'] = n_color
             Settings.update(settings)
             updated_settings = Settings.get()
             cls.qr_code_rendering_settings_ui(updated_settings)
         elif select == 2:
-            b_color = Interface.get_color_picker(settings['qr_r_background_color'])
+            b_color = get_color_picker(settings['qr_r_background_color'])
             settings['qr_r_background_color'] = b_color
             Settings.update(settings)
             updated_settings = Settings.get()
@@ -343,8 +342,9 @@ def convert_hex(hex_color):
 
 
 def get_color_picker(color_dict):
+    tkinter.Tk().withdraw()
     old_color = color_dict['SVG']
-    hex_color = askcolor(old_color, alpha=True)[-1]
+    hex_color = askcolor(color=old_color, alpha=True)[-1]
     rgb_color, rgba_color = convert_hex(hex_color)
     new_color = {'PNG': rgba_color, 'SVG': hex_color, 'EPS': rgb_color}
     return new_color
