@@ -1,4 +1,4 @@
-"""This file contains the main Class for the program"""
+"""This file contains the code that loads and runs the plugins."""
 
 import importlib
 

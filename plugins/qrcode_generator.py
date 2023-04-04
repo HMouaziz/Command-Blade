@@ -19,11 +19,7 @@ class Plugin:
 
     @staticmethod
     def get_hook():
-        """ UFI is Unique Feature Identifier:  1-B-HW = new_feature-beta_level-Hello_World
-            [feature type](1= feature addition, 2= modification of existing feature)
-            [random number](3 random integers)
-            [feature name initials]"""
-        ui_hook = {'UFI': '1-910-QRCG', 'module': 'qrcode_generator', 'class': 'QRCodeGenerator',
+        ui_hook = {'ID': '03', 'module': 'qrcode_generator', 'class': 'QRCodeGenerator',
                    'method': 'qr_code_generator_ui', 'choice_name': 'QR Code Generator'}
         return ui_hook
 
@@ -342,9 +338,11 @@ def convert_hex(hex_color):
 
 
 def get_color_picker(color_dict):
-    tkinter.Tk().withdraw()
     old_color = color_dict['SVG']
-    hex_color = askcolor(color=old_color, alpha=True)[-1]
+    hex_color = askcolor(color=old_color, parent=None, alpha=True)[-1]
+    tkinter.Tk().withdraw()
+    if hex_color is None:
+        return color_dict
     rgb_color, rgba_color = convert_hex(hex_color)
     new_color = {'PNG': rgba_color, 'SVG': hex_color, 'EPS': rgb_color}
     return new_color

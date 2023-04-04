@@ -1,4 +1,5 @@
 import hashlib
+import pyperclip
 from InquirerPy import inquirer
 from InquirerPy.base import Choice
 from core.interface import Interface
@@ -11,12 +12,8 @@ class Plugin:
 
     @staticmethod
     def get_hook():
-        """ UFI is Unique Feature Identifier:  1-B-HW = new_feature-beta_level-Hello_World
-            [feature type](1= feature addition, 2= modification of existing feature)
-            [random number](3 random integers)
-            [feature name initials]"""
-        ui_hook = {'UFI': '1-121-HG', 'module': 'hash_generator', 'class': 'HashGenerator',
-                   'method': 'hash_generator_ui', 'choice_name': 'Hash Generator'}
+        ui_hook = {'ID': '01', 'module': 'hash_generator', 'class': 'HashGenerator',
+                   'method': 'hash_generator_ui', 'choice_name': 'File Hasher'}
         return ui_hook
 
 
@@ -25,13 +22,11 @@ class HashGenerator:
 
     @classmethod
     def hash_generator_ui(cls):
-        message = "What kind of data type would you like to check?"
+        message = ''
         select = inquirer.select(
             message=message,
             choices=[
-                Choice(value=1, name="String"),
-                Choice(value=2, name="File"),
-                Choice(value=3, name="Settings"),
+                Choice(value=1, name="Hash File"),
                 Choice(value=None, name="Exit"),
             ],
             default=None,
@@ -40,45 +35,20 @@ class HashGenerator:
             amark="≻≻"
         ).execute()
         if select == 1:
+            filepath = Interface.get_filepath_gui()
             hash_algorithm = cls.hash_algorithm_selector_ui()
-            string_input = Interface.get_input(datatype=str, message="Enter string.")
-            print(hash_string(hash_algorithm, string_input))
-            cls.hash_generator_ui()
-        elif select == 2:
-            hash_algorithm = cls.hash_algorithm_selector_ui()
-            filepath = Interface.get_filepath()
-            print(filepath)
             hashed_file = hash_file(hash_algorithm, filepath)
-            print(hashed_file.hexdigest())
+            h = hashed_file.hexdigest()
+            pyperclip.copy(h)
+            Interface.print(h, "y")
             cls.hash_generator_ui()
-        elif select == 3:
-            cls.hash_generator_settings_ui()
         elif select is None:
             choices, instruction_data = Interface.get_menu_list()
             Interface.main_menu(choices, instruction_data)
 
     @classmethod
-    def hash_generator_settings_ui(cls):
-        message = ""
-        select = inquirer.select(
-            message=message,
-            choices=[
-                Choice(value=1, name="Change hash algorithm"),
-                Choice(value=None, name="Exit"),
-            ],
-            default=None,
-            style=cls.style,
-            qmark="≻≻",
-            amark="≻≻"
-        ).execute()
-        if select == 1:
-            cls.hash_algorithm_selector_ui()
-        elif select is None:
-            cls.hash_generator_ui()
-
-    @classmethod
     def hash_algorithm_selector_ui(cls):
-        function = inquirer.fuzzy(
+        algorithm = inquirer.fuzzy(
             message="Select which hash algorithm you would like to use.",
             choices=[Choice(value="md5", name="MD5"),
                      Choice(value="sha1", name="SHA1"),
@@ -92,7 +62,7 @@ class HashGenerator:
             style=cls.style,
             default="",
         ).execute()
-        return function
+        return algorithm
 
 
 def hash_string(hash_algorithm, input_string):

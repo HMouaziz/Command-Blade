@@ -1,0 +1,4 @@
+
+class ValidationValueError(Exception):
+    pass
+

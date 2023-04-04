@@ -3,7 +3,6 @@ import string
 from InquirerPy import inquirer
 from InquirerPy.base import Choice
 from InquirerPy.validator import EmptyInputValidator
-from printy import printy
 from core.interface import Interface
 from core.functions import Settings
 
@@ -15,11 +14,7 @@ class Plugin:
 
     @staticmethod
     def get_hook():
-        """ UFI is Unique Feature Identifier:  1-B-HW = new_feature-beta_level-Hello_World
-            [feature type](1= feature addition, 2= modification of existing feature)
-            [random number](3 random integers)
-            [feature name initials]"""
-        ui_hook = {'UFI': '1-078-PG', 'module': 'password_generator', 'class': 'PasswordGenerator',
+        ui_hook = {'ID': '02', 'module': 'password_generator', 'class': 'PasswordGenerator',
                    'method': 'password_generator_ui', 'choice_name': 'Password Generator'}
         return ui_hook
 
@@ -44,12 +39,11 @@ class PasswordGenerator:
         ).execute()
         if select == 1:
             settings = Settings.get()
-            printy(generate_password(settings['p_type'],
-                                     settings['length'],
-                                     settings['use_capitals'],
-                                     settings['use_digits'],
-                                     settings['use_symbols']
-                                     ), 'y')
+            Interface.print(generate_password(settings['length'],
+                                              settings['use_capitals'],
+                                              settings['use_digits'],
+                                              settings['use_symbols']
+                                              ), 'y')
             cls.password_generator_ui()
         elif select == 2:
             cls.password_generator_settings_ui()
@@ -65,8 +59,7 @@ class PasswordGenerator:
             message=message,
             choices=[
                 Choice(value=1, name="Change password length"),
-                Choice(value=2, name="Change password type"),
-                Choice(value=3, name="Select character list"),
+                Choice(value=2, name="Select character list"),
                 Choice(value=None, name="Exit"),
             ],
             default=None,
@@ -81,18 +74,6 @@ class PasswordGenerator:
             ).execute()
             Settings.update(settings)
         elif select == 2:
-            settings['p_type'] = inquirer.select(
-                message='Select type:',
-                choices=[
-                    Choice(value='Char', name="Characters"),
-                    Choice(value='Word', name="Words")
-                ],
-                style=cls.style,
-                qmark="≻≻",
-                amark="≻≻"
-            ).execute()
-            Settings.update(settings)
-        elif select == 3:
             selection = inquirer.checkbox(
                 message="Select:",
                 choices=[
@@ -108,11 +89,11 @@ class PasswordGenerator:
                 settings["use_capitals"] = True
             elif 1 not in selection:
                 settings["use_capitals"] = False
-            elif 2 in selection:
+            if 2 in selection:
                 settings["use_digits"] = True
             elif 2 not in selection:
                 settings["use_digits"] = False
-            elif 3 in selection:
+            if 3 in selection:
                 settings["use_symbols"] = True
             elif 3 not in selection:
                 settings["use_symbols"] = False
@@ -122,7 +103,7 @@ class PasswordGenerator:
         cls.password_generator_settings_ui()
 
 
-def generate_password(p_type, length, capital, digits, symbols):
+def generate_password(length, capital, digits, symbols):
     characters = ''
     if capital is True:
         characters = characters.join(string.ascii_letters)

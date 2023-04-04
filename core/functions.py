@@ -3,10 +3,12 @@
 import importlib
 import json
 import os
+import socket
 from os import listdir
 from os.path import isfile, join
-
+from dotenv import load_dotenv
 import filetype as filetype
+from InquirerPy import get_style
 
 
 class Load:
@@ -39,7 +41,36 @@ class Load:
         return hooks
 
 
+class APILoader:
+    @classmethod
+    def load_env(cls):
+        load_dotenv()
+
+
 class Settings:
+    @classmethod
+    def get_style(cls):
+        return get_style({"questionmark": "#ea6500",
+                          "answermark": "#e5c07b",
+                          "answer": "#ffffff",
+                          "input": "#ea6500",
+                          "question": "",
+                          "answered_question": "",
+                          "instruction": "#abb2bf",
+                          "long_instruction": "#abb2bf",
+                          "pointer": "#ea6500",
+                          "checkbox": "#f06800",
+                          "separator": "",
+                          "skipped": "#5c6370",
+                          "validator": "",
+                          "marker": "#f06800",
+                          "fuzzy_prompt": "#c678dd",
+                          "fuzzy_info": "#abb2bf",
+                          "fuzzy_border": "#ea6500",
+                          "fuzzy_match": "#c678dd",
+                          "spinner_pattern": "#e5c07b",
+                          "spinner_text": ""}, style_override=True)
+
     @classmethod
     def get(cls):
         with open('settings.json', 'r') as f:
@@ -69,6 +100,13 @@ class FileUtil:
 
 
 class Utils:
+
+    @classmethod
+    def get_ip(cls):
+        """Returns hostname(0) and ip address(1)"""
+        hostname = socket.gethostname()
+        ip = socket.gethostbyname(hostname)
+        return ip
 
     @staticmethod
     def check_instance(name: str, instance, value):

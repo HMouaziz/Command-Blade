@@ -66,7 +66,7 @@ class Calculate(Command):
                                        }
 
     @classmethod
-    def calc(cls, input_dict):
+    def calc(cls, input_dict):  # !!! Uses eval()
         equation = input_dict['data'][0]
         printy(eval(equation), 'y')
 
@@ -178,7 +178,7 @@ class Hash(Command):
                 hashed_file = hash_file(algorithm, i.replace('"', ''))
                 printy(hashed_file.hexdigest(), 'y')
         elif input_dict['modifiers'][0] == '-ui':
-            path = Interface.get_filepath()
+            path = Interface.get_filepath_gui()
             hashed_file = hash_file(algorithm, path)
             printy(hashed_file.hexdigest(), 'y')
         else:

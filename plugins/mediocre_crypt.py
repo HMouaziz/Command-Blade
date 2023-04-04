@@ -1,3 +1,5 @@
+"""Mediocre file encryption based on the RC4 Stream Cipher
+(If wrong password entered when decrypting file will be scrambled)"""
 import hashlib
 import os.path
 from InquirerPy import inquirer
@@ -14,11 +16,7 @@ class Plugin:
 
     @staticmethod
     def get_hook():
-        """ UFI is Unique Feature Identifier:  1-B-HW = new_feature-beta_level-Hello_World
-            [feature type](1= feature addition, 2= modification of existing feature)
-            [random number](3 random integers)
-            [feature name initials]"""
-        ui_hook = {'UFI': '1-847-ME', 'module': 'mediocre_crypt', 'class': 'MediocreCrypt',
+        ui_hook = {'ID': '04', 'module': 'mediocre_crypt', 'class': 'MediocreCrypt',
                    'method': 'mediocre_crypt_ui', 'choice_name': 'MediocreCrypt Encryption Tool'}
         return ui_hook
 
@@ -60,14 +58,14 @@ class MediocreCrypt:
 
     @classmethod
     def encrypt_file(cls):
-        filepath = Interface.get_filepath()
+        filepath = Interface.get_filepath_gui()
         password = Interface.get_input(message="Enter password:", datatype=str, secret=True)
         ms = MediocreStream(filepath, password)
         ms.encrypt()
 
     @classmethod
     def decrypt_file(cls):
-        filepath = Interface.get_filepath()
+        filepath = Interface.get_filepath_gui()
         password = Interface.get_input(message="Enter password:", datatype=str, secret=True)
         ms = MediocreStream(filepath, password)
         ms.decrypt()
