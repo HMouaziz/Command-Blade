@@ -1,4 +1,4 @@
-# Command-Blade
+# Command-Blade (multitool)
 Command line application that is used to run any compatible plugin as well as some preset commands.
 ## Current features:
 - File Hasher
