@@ -1,5 +1,5 @@
 # Command-Blade (multitool)
-Command line application that is used to run any compatible plugin as well as some preset commands.
+Simple command line application that can accept plugins.
 ## Current features:
 - File Hasher
 - Password Generator
