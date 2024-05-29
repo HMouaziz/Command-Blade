@@ -25,7 +25,7 @@ CommandBlade is a versatile command-line application framework designed to strea
 To install CommandBlade, clone the repository and install the required dependencies:
 
 ```bash
-git clone <repository_url>
+git clone https://github.com/HMouaziz/Command-Blade.git
 cd CommandBlade
 pip install -r requirements.txt
 ```
