@@ -400,3 +400,5 @@ These examples demonstrate various functionalities and can serve as a template f
 ---
 
 This documentation should help you get started with CommandBlade and guide you through creating and managing your plugins. If you encounter any issues or have questions, please refer to the example plugins or reach out for support.
+
+Developed by Halim Mouaziz @ project-hephaestus.com © 2024
